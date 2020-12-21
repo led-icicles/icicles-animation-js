@@ -1,4 +1,5 @@
 import fs from "fs";
+import { TextEncoder } from "util";
 import Color from "./color";
 import AdditiveFrame from "./frames/additive_frame";
 import DelayFrame from "./frames/delay_frame";
@@ -76,18 +77,39 @@ export default class Animation {
     this.currentView = newFrame;
   };
 
+  public getEncodedAnimationName = (): Uint8Array => {
+    const encoder = new TextEncoder();
+    const encodedName = encoder.encode(this.animationName);
+    const encodednNameWithNullChar = new Uint8Array(encodedName.length + 1);
+    encodednNameWithNullChar.set(encodedName);
+    const NULL_CHAR = 0;
+    encodednNameWithNullChar[encodedName.length] = NULL_CHAR;
+    return encodednNameWithNullChar;
+  };
+
+  public get fileDataBytes(): number {
+    let size = 0;
+    for (let i = 0; i < this._frames.length; i++) {
+      const frame = this._frames[i];
+      size += frame.fileDataBytes;
+    }
+    const NULL_CHAR_BYTE_COUNT = 1;
+    const nameSize = this.animationName.length + NULL_CHAR_BYTE_COUNT;
+    return size + nameSize;
+  }
+
   toFileData = (): Uint8Array => {
     if (this._frames.length === 0) {
       throw new Error("Animation is empty.");
     }
 
-    const framesCount = this._frames.length;
-    const firstFrame = this._frames[0];
-    const frameSize = firstFrame.fileDataBytes;
-    const data = new Uint8Array(frameSize * framesCount);
+    const data = new Uint8Array(this.fileDataBytes);
 
-    let offset = 0;
+    const encodedName = this.getEncodedAnimationName();
+    const nameSize = encodedName.length;
+    data.set(encodedName);
 
+    let offset = nameSize;
     for (const frame of this._frames) {
       const frameBytes = frame.toFileData();
       const frameSize = frame.fileDataBytes;
@@ -102,6 +124,13 @@ export default class Animation {
 
   toFile = async (path: string = `./${this.animationName}.anim`) => {
     const stream = fs.createWriteStream(path, { encoding: "binary" });
+
+    await new Promise<void>((res, rej) =>
+      stream.write(this.getEncodedAnimationName(), (err) => {
+        if (err) rej(err);
+        res();
+      })
+    );
 
     for (const frame of this._frames) {
       const frameBytes = frame.toFileData();

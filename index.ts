@@ -7,7 +7,7 @@ const optimize = true;
 
 const compile = async () => {
   const icicles = new Icicles(20, 15);
-  const anim = new Animation("anim", 300);
+  const anim = new Animation("janek", 300);
 
   for (let i = 0; i < 300; i++) {
     icicles.setAllPixelsColor(new Color(0, 0, 0));
