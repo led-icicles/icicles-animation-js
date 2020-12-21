@@ -2,40 +2,41 @@ import Color from "./color";
 import VisualFrame from "./frames/visual_frame";
 
 class Icicles {
-  public readonly leds: Array<Color>;
+  public readonly pixels: Array<Color>;
   constructor(
     public readonly iciclesCount: number,
     public readonly ledsPerIcicle: number
   ) {
-    this.leds = new Array(iciclesCount * ledsPerIcicle).fill(
+    this.pixels = new Array(iciclesCount * ledsPerIcicle).fill(
       new Color(0, 0, 0)
     );
   }
 
-  getLedIndex = (icicle: number, led: number) => {
+  getPixelIndex = (icicle: number, led: number) => {
     return icicle * this.ledsPerIcicle + led;
   };
 
-  setLedColor = (icicle: number, led: number, color: Color) => {
-    const index = this.getLedIndex(icicle, led);
-    this.leds[index] = color;
+  setPixelColor = (icicle: number, led: number, color: Color) => {
+    const index = this.getPixelIndex(icicle, led);
+    this.pixels[index] = color;
   };
 
-  setLedColorAtIndex = (index: number, color: Color) => {
-    this.leds[index] = color;
+  setPixelColorAtIndex = (index: number, color: Color) => {
+    this.pixels[index] = color;
   };
 
-  getLedColor = (icicle: number, led: number): Color => {
-    const index = this.getLedIndex(icicle, led);
-    return this.leds[index];
+  getPixelColor = (icicle: number, led: number): Color => {
+    const index = this.getPixelIndex(icicle, led);
+    return this.pixels[index];
   };
 
-  setAllLedsColor = (color: Color) => {
-    this.leds.fill(color);
+  setAllPixelsColor = (color: Color) => {
+    this.pixels.fill(color);
   };
 
-  toVisualFrame = (duration: number) => {
-    return new VisualFrame(this.leds, duration);
+  toFrame = (duration: number): VisualFrame => {
+    const copiedPixels = this.pixels.slice(0);
+    return new VisualFrame(copiedPixels, duration);
   };
 }
 

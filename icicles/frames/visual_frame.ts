@@ -11,15 +11,33 @@ export default class VisualFrame extends Frame {
     super(duration);
   }
 
+  /// Verify wether two visual frames are compatibility
+  public static assertVisualFramesCompatibility = (
+    prevFrame: VisualFrame,
+    nextFrame: VisualFrame
+  ) => {
+    if (
+      !(prevFrame instanceof VisualFrame) ||
+      !(nextFrame instanceof VisualFrame)
+    ) {
+      throw new Error("Bad frame type.");
+    } else if (prevFrame.fileDataBytes !== nextFrame.fileDataBytes) {
+      throw new Error("Frames cannot have different sizes.");
+    }
+  };
+
+  /// Copy visual frame instance
+  public copy = () => new VisualFrame(this.pixels.slice(0), this.duration);
+
   /// [(1)type][(2)duration][(ledsCount*3)pixels]
-  get fileDataBytes(): number {
+  public get fileDataBytes(): number {
     const typeSize = 1;
     const durationSize = 2;
     const colorsSize = this.pixels.length * 3;
     return typeSize + durationSize + colorsSize;
   }
 
-  toFileData = (): Uint8Array => {
+  public toFileData = (): Uint8Array => {
     const size = this.fileDataBytes;
 
     let dataPointer: number = 0;

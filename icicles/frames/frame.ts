@@ -25,6 +25,6 @@ export abstract class Frame {
     }
   }
 
-  abstract get fileDataBytes(): number;
-  abstract toFileData(): Uint8Array;
+  public abstract get fileDataBytes(): number;
+  public abstract toFileData(): Uint8Array;
 }

@@ -1,4 +1,4 @@
-import { IndexedColor } from "../color";
+import Color, { IndexedColor } from "../color";
 import { Frame, FrameType } from "./frame";
 import VisualFrame from "./visual_frame";
 
@@ -21,14 +21,11 @@ export default class AdditiveFrame extends Frame {
     }
   }
 
-  static fromVisualFrames = (
+  public static getChangedPixelsFromFrames = (
     prevFrame: VisualFrame,
-    nextFrame: VisualFrame,
-    duration: number
-  ): AdditiveFrame => {
-    if (prevFrame.fileDataBytes !== nextFrame.fileDataBytes) {
-      throw new Error("Frames cannot have different sizes.");
-    }
+    nextFrame: VisualFrame
+  ): Array<IndexedColor> => {
+    VisualFrame.assertVisualFramesCompatibility(prevFrame, nextFrame);
 
     const changedPixels: Array<IndexedColor> = [];
 
@@ -42,7 +39,19 @@ export default class AdditiveFrame extends Frame {
       }
     }
 
-    return new AdditiveFrame(changedPixels, duration);
+    return changedPixels;
+  };
+
+  static fromVisualFrames = (
+    prevFrame: VisualFrame,
+    nextFrame: VisualFrame
+  ): AdditiveFrame => {
+    const changedPixels = AdditiveFrame.getChangedPixelsFromFrames(
+      prevFrame,
+      nextFrame
+    );
+
+    return new AdditiveFrame(changedPixels, nextFrame.duration);
   };
 
   // [(1 - uint8)type][(2 - uint16)duration][(4 - uint32)size][(x * 5)changedPixels]
@@ -55,7 +64,7 @@ export default class AdditiveFrame extends Frame {
     return headerSize + durationSize + sizeFieldSize + changedPixelsSize;
   }
 
-  toFileData = (): Uint8Array => {
+  public toFileData = (): Uint8Array => {
     const size = this.fileDataBytes;
 
     let dataPointer: number = 0;
