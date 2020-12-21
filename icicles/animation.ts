@@ -1,26 +1,28 @@
 import fs from "fs";
-import Frame from "./frame";
+import VisualFrame from "./frames/visual_frame";
 
 export default class Animation {
-  private readonly _frames: Array<Frame> = [];
+  private readonly _frames: Array<VisualFrame> = [];
 
   constructor(
     public readonly animationName: string,
     public readonly ledsCount: number
   ) {}
 
-  addFrame = (frame: Frame) => {
+  addFrame = (frame: VisualFrame) => {
     if (!frame) {
       throw new Error("Frame was not provided.");
-    } else if (!(frame instanceof Frame)) {
+    } else if (!(frame instanceof VisualFrame)) {
       throw new Error("Unsupported frame type.");
-    } else if (frame.colors.length !== this.ledsCount) {
+    } else if (frame.pixels.length !== this.ledsCount) {
       throw new Error(
         `Unsupported frame length. ` +
-          `Current: ${frame.colors.length}, ` +
+          `Current: ${frame.pixels.length}, ` +
           `required: ${this.ledsCount}`
       );
     }
+
+    
 
     this._frames.push(frame);
   };

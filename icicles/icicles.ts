@@ -1,5 +1,5 @@
 import Color from "./color";
-import Frame from "./frame";
+import VisualFrame from "./frames/visual_frame";
 
 class Icicles {
   public readonly leds: Array<Color>;
@@ -21,6 +21,10 @@ class Icicles {
     this.leds[index] = color;
   };
 
+  setLedColorAtIndex = (index: number, color: Color) => {
+    this.leds[index] = color;
+  };
+
   getLedColor = (icicle: number, led: number): Color => {
     const index = this.getLedIndex(icicle, led);
     return this.leds[index];
@@ -31,10 +35,7 @@ class Icicles {
   };
 
   toVisualFrame = (duration: number) => {
-    return new Frame(
-      this.leds.map((color) => color.toJson()),
-      duration
-    );
+    return new VisualFrame(this.leds, duration);
   };
 }
 
