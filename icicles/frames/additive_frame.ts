@@ -4,12 +4,21 @@ import VisualFrame from "./visual_frame";
 
 export default class AdditiveFrame extends Frame {
   public readonly type: FrameType = FrameType.AdditiveFrame;
+  static readonly maxChangedPixelIndex: number = 65535;
 
   constructor(
     public readonly changedPixels: Array<IndexedColor>,
     public readonly duration: number
   ) {
     super(duration);
+
+    if (changedPixels == null) {
+      throw new Error("changedPixels argument cannot be null");
+    } else if (changedPixels.length > AdditiveFrame.maxChangedPixelIndex) {
+      throw new Error(
+        "Provided more chnaged pixels than maximum allowed. Check [AdditiveFrame.maxChangedPixelIndex]."
+      );
+    }
   }
 
   static fromVisualFrames = (
