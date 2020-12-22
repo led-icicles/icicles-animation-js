@@ -45,9 +45,9 @@ export default class VisualFrame extends Frame {
     const data = new Uint8Array(size);
     /// frame header
     data[dataPointer++] = this.type;
-    /// frame duration
-    data[dataPointer++] = this.duration >>> 8;
+    /// frame duration (little endian)
     data[dataPointer++] = this.duration & 255;
+    data[dataPointer++] = this.duration >>> 8;
     /// frame pixels
     for (let i = 0; i < this.pixels.length; i++) {
       data[dataPointer++] = this.pixels[i].red;

@@ -72,20 +72,21 @@ export default class AdditiveFrame extends Frame {
     const data = new Uint8Array(size);
     /// frame header
     data[dataPointer++] = this.type;
-    /// frame duration
-    data[dataPointer++] = this.duration >>> 8;
+    /// frame duration (little endian)
     data[dataPointer++] = this.duration & 255;
-    /// frame size
+    data[dataPointer++] = this.duration >>> 8;
+    /// frame size (little endian)
     const changedPixelsCount = this.changedPixels.length;
-    data[dataPointer++] = changedPixelsCount >>> 8;
     data[dataPointer++] = changedPixelsCount & 255;
+    data[dataPointer++] = changedPixelsCount >>> 8;
     /// frame pixels
     for (let i = 0; i < this.changedPixels.length; i++) {
       const changedPixel = this.changedPixels[i];
       const index = changedPixel.index;
 
-      data[dataPointer++] = index >>> 8;
+      /// frame duration (little endian)
       data[dataPointer++] = index & 255;
+      data[dataPointer++] = index >>> 8;
 
       const color = changedPixel.color;
       data[dataPointer++] = color.red;
