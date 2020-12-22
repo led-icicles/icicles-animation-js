@@ -54,14 +54,14 @@ export default class AdditiveFrame extends Frame {
     return new AdditiveFrame(changedPixels, nextFrame.duration);
   };
 
-  // [(1 - uint8)type][(2 - uint16)duration][(4 - uint32)size][(x * 5)changedPixels]
+  // [(1 - uint8)type][(2 - uint16)duration][(2 - uint16)size][(x * 5)changedPixels]
   get fileDataBytes(): number {
-    const headerSize = 1;
+    const typeSize = 1;
     const durationSize = 2;
-    const sizeFieldSize = 4;
+    const sizeFieldSize = 2;
     // [(2 - uint16)pixel_index][(1 -uint8)red][(1 -uint8)green][(1 -uint8)blue]
     const changedPixelsSize = this.changedPixels.length * 5;
-    return headerSize + durationSize + sizeFieldSize + changedPixelsSize;
+    return typeSize + durationSize + sizeFieldSize + changedPixelsSize;
   }
 
   public toFileData = (): Uint8Array => {
@@ -84,7 +84,7 @@ export default class AdditiveFrame extends Frame {
       const changedPixel = this.changedPixels[i];
       const index = changedPixel.index;
 
-      /// frame duration (little endian)
+      /// pixel index (little endian)
       data[dataPointer++] = index & 255;
       data[dataPointer++] = index >>> 8;
 
