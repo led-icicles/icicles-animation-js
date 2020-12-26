@@ -10,8 +10,8 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./frames/additive_frame"), exports);
-__exportStar(require("./frames/visual_frame"), exports);
-__exportStar(require("./frames/frame"), exports);
-__exportStar(require("./animation"), exports);
-__exportStar(require("./icicles"), exports);
+__exportStar(require("./icicles/frames/additive_frame"), exports);
+__exportStar(require("./icicles/frames/visual_frame"), exports);
+__exportStar(require("./icicles/frames/frame"), exports);
+__exportStar(require("./icicles/animation"), exports);
+__exportStar(require("./icicles/icicles"), exports);
