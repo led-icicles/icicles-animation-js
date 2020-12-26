@@ -25,11 +25,13 @@ describe("Animation works correctly", () => {
   test("VisualFrames works corretly", () => {
     const iciclesSize = 4;
     const icicles = new Icicles(1, iciclesSize);
-    const animation = new Animation("animation", icicles.pixels.length);
+    const animation = new Animation("animation", icicles.pixels.length, {
+      optimize: false,
+    });
     for (let i = 0; i < iciclesSize; i++) {
       icicles.setAllPixelsColor(new Color(0, 0, 0));
       icicles.setPixelColorAtIndex(i, new Color(255, 255, 255));
-      animation.addFrame(icicles.toFrame(400), { optimize: false });
+      animation.addFrame(icicles.toFrame(400));
     }
 
     expect(animation.toFileData()).toMatchSnapshot();
@@ -38,11 +40,13 @@ describe("Animation works correctly", () => {
   test("Creates AdditiveFrame corretly", () => {
     const iciclesSize = 4;
     const icicles = new Icicles(1, iciclesSize);
-    const animation = new Animation("animation", icicles.pixels.length);
+    const animation = new Animation("animation", icicles.pixels.length, {
+      optimize: true,
+    });
     for (let i = 0; i < iciclesSize; i++) {
       icicles.setAllPixelsColor(new Color(0, 0, 0));
       icicles.setPixelColorAtIndex(i, new Color(255, 255, 255));
-      animation.addFrame(icicles.toFrame(400), { optimize: true });
+      animation.addFrame(icicles.toFrame(400));
     }
 
     expect(animation.toFileData()).toMatchSnapshot();

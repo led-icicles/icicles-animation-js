@@ -1,4 +1,4 @@
-import Color, { IndexedColor } from "../color";
+import { IndexedColor } from "../color";
 import { Frame, FrameType } from "./frame";
 import VisualFrame from "./visual_frame";
 

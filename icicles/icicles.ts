@@ -21,6 +21,13 @@ class Icicles {
     this.pixels[index] = color;
   };
 
+  setIcicleColor = (icicle: number, color: Color) => {
+    const index = this.getPixelIndex(icicle, 0);
+    for (let i = index; i < index + this.ledsPerIcicle; i++) {
+      this.pixels[i] = color;
+    }
+  };
+
   setPixelColorAtIndex = (index: number, color: Color) => {
     this.pixels[index] = color;
   };
@@ -32,6 +39,15 @@ class Icicles {
 
   setAllPixelsColor = (color: Color) => {
     this.pixels.fill(color);
+  };
+
+  setPixels = (pixels: Array<Color>) => {
+    if (this.pixels.length !== pixels.length) {
+      throw new Error("Unsupported pixels count");
+    }
+
+    this.pixels.length = 0;
+    this.pixels.push(...pixels);
   };
 
   toFrame = (duration: number): VisualFrame => {

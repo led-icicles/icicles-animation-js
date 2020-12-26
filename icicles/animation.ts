@@ -6,7 +6,7 @@ import DelayFrame from "./frames/delay_frame";
 import { Frame } from "./frames/frame";
 import VisualFrame from "./frames/visual_frame";
 
-type AddFrameOptions = {
+type AnimationOptions = {
   optimize?: boolean;
 };
 
@@ -15,10 +15,12 @@ export default class Animation {
 
   /// Current pixels view
   private currentView: VisualFrame;
+  public readonly optimize: boolean = false;
 
   constructor(
     public readonly animationName: string,
-    public readonly ledsCount: number
+    public readonly ledsCount: number,
+    options?: AnimationOptions
   ) {
     /// Before each animation leds are set to black color.
     /// But black color is not displayed. To set all pixels to black,
@@ -28,12 +30,12 @@ export default class Animation {
       /// zero duration - this is just a placeholder
       0
     );
+    if (options) {
+      this.optimize = options.optimize ?? false;
+    }
   }
 
-  addFrame = (
-    newFrame: VisualFrame,
-    { optimize = false }: AddFrameOptions = {}
-  ) => {
+  addFrame = (newFrame: VisualFrame) => {
     if (!newFrame) {
       throw new Error("Frame was not provided.");
     } else if (!(newFrame instanceof VisualFrame)) {
@@ -46,7 +48,7 @@ export default class Animation {
       );
     }
 
-    if (optimize) {
+    if (this.optimize) {
       const changedPixels = AdditiveFrame.getChangedPixelsFromFrames(
         this.currentView,
         newFrame
