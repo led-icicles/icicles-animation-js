@@ -1,6 +1,6 @@
-import Animation from "./icicles/animation";
-import Color, { Colors, IndexedColor } from "./icicles/color";
-import Icicles from "./icicles/icicles";
+import Animation from "../icicles/animation";
+import Color, { Colors, IndexedColor } from "../icicles/color";
+import Icicles from "../icicles/icicles";
 
 const optimize = true;
 
@@ -26,28 +26,35 @@ const compile = async () => {
       anim.addFrame(icicles.toFrame(10));
     }
 
-    /// darken all pixels to 0;
-    let progress: number = 0.0;
-    while (progress < 1.0) {
-      progress += 0.01;
+    // /// darken all pixels to 0;
+    // let progress: number = 0.0;
+    // while (progress < 1.0) {
+    //   progress += 0.01;
 
-      const newColor = color.darken(progress);
-      icicles.setAllPixelsColor(newColor);
+    //   const newColor = color.darken(progress);
+    //   icicles.setAllPixelsColor(newColor);
 
-      anim.addFrame(icicles.toFrame(40));
-    }
+    //   anim.addFrame(icicles.toFrame(40));
+    // }
 
     /// wait for second before next cycle
-    anim.addFrame(icicles.toFrame(1000));
+    anim.addFrame(icicles.toFrame(500));
   };
 
   generateNoiseWithColor(Colors.white);
+  generateNoiseWithColor(Colors.black);
   generateNoiseWithColor(Colors.orange);
+  generateNoiseWithColor(Colors.black);
   generateNoiseWithColor(Colors.oceanBlue);
+  generateNoiseWithColor(Colors.black);
   generateNoiseWithColor(Colors.magenta);
+  generateNoiseWithColor(Colors.black);
   generateNoiseWithColor(Colors.red);
+  generateNoiseWithColor(Colors.black);
   generateNoiseWithColor(Colors.blue);
+  generateNoiseWithColor(Colors.black);
   generateNoiseWithColor(Colors.green);
+  generateNoiseWithColor(Colors.black);
 
   await anim.toFile(`./kolorowy-szum${optimize ? "-optimized" : ""}.anim`);
 

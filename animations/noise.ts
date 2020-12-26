@@ -1,6 +1,6 @@
-import Animation from "./icicles/animation";
-import Color, { Colors } from "./icicles/color";
-import Icicles from "./icicles/icicles";
+import Animation from "../icicles/animation";
+import Color, { Colors } from "../icicles/color";
+import Icicles from "../icicles/icicles";
 
 const optimize = false;
 
