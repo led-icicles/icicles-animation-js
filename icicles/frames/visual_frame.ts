@@ -37,6 +37,27 @@ export default class VisualFrame extends Frame {
     return typeSize + durationSize + colorsSize;
   }
 
+  public static linearBlend = (
+    from: VisualFrame,
+    to: VisualFrame,
+    progress: number,
+    duration?: number
+  ): VisualFrame => {
+    VisualFrame.assertVisualFramesCompatibility(from, to);
+
+    const pixels = from.pixels.map((color, index) =>
+      Color.linearBlend(color, to.pixels[index], progress)
+    );
+
+    return new VisualFrame(pixels, duration ?? to.duration);
+  };
+
+  public darken = (progress: number, duration?: number): VisualFrame => {
+    const pixels = this.pixels.map((color) => color.darken(progress));
+
+    return new VisualFrame(pixels, duration ?? this.duration);
+  };
+
   public toFileData = (): Uint8Array => {
     const size = this.fileDataBytes;
 

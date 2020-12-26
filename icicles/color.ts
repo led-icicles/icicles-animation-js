@@ -27,10 +27,18 @@ export class Color {
     Color.linearBlend(this, new Color(0, 0, 0), progress);
 
   static linearBlend = (left: Color, right: Color, progress: number): Color => {
+    const MIN_PROGRESS = 0.0;
+    const MAX_PROGRESS = 1.0;
+    const clampedProgress =
+      progress > MAX_PROGRESS
+        ? MAX_PROGRESS
+        : progress < MIN_PROGRESS
+        ? MIN_PROGRESS
+        : progress;
     return new Color(
-      left.red + (right.red - left.red) * progress,
-      left.green + (right.green - left.green) * progress,
-      left.blue + (right.blue - left.blue) * progress
+      left.red + (right.red - left.red) * clampedProgress,
+      left.green + (right.green - left.green) * clampedProgress,
+      left.blue + (right.blue - left.blue) * clampedProgress
     );
   };
 }

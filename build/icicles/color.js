@@ -26,7 +26,14 @@ var Color = /** @class */ (function () {
         };
     }
     Color.linearBlend = function (left, right, progress) {
-        return new Color(left.red + (right.red - left.red) * progress, left.green + (right.green - left.green) * progress, left.blue + (right.blue - left.blue) * progress);
+        var MIN_PROGRESS = 0.0;
+        var MAX_PROGRESS = 1.0;
+        var clampedProgress = progress > MAX_PROGRESS
+            ? MAX_PROGRESS
+            : progress < MIN_PROGRESS
+                ? MIN_PROGRESS
+                : progress;
+        return new Color(left.red + (right.red - left.red) * clampedProgress, left.green + (right.green - left.green) * clampedProgress, left.blue + (right.blue - left.blue) * clampedProgress);
     };
     return Color;
 }());

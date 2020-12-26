@@ -12,7 +12,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var color_1 = __importDefault(require("../color"));
 var frame_1 = require("./frame");
 var VisualFrame = /** @class */ (function (_super) {
     __extends(VisualFrame, _super);
@@ -23,6 +27,10 @@ var VisualFrame = /** @class */ (function (_super) {
         _this.type = frame_1.FrameType.VisualFrame;
         /// Copy visual frame instance
         _this.copy = function () { return new VisualFrame(_this.pixels.slice(0), _this.duration); };
+        _this.darken = function (progress, duration) {
+            var pixels = _this.pixels.map(function (color) { return color.darken(progress); });
+            return new VisualFrame(pixels, duration !== null && duration !== void 0 ? duration : _this.duration);
+        };
         _this.toFileData = function () {
             var size = _this.fileDataBytes;
             var dataPointer = 0;
@@ -62,6 +70,13 @@ var VisualFrame = /** @class */ (function (_super) {
         else if (prevFrame.fileDataBytes !== nextFrame.fileDataBytes) {
             throw new Error("Frames cannot have different sizes.");
         }
+    };
+    VisualFrame.linearBlend = function (from, to, progress, duration) {
+        VisualFrame.assertVisualFramesCompatibility(from, to);
+        var pixels = from.pixels.map(function (color, index) {
+            return color_1.default.linearBlend(color, to.pixels[index], progress);
+        });
+        return new VisualFrame(pixels, duration !== null && duration !== void 0 ? duration : to.duration);
     };
     return VisualFrame;
 }(frame_1.Frame));
