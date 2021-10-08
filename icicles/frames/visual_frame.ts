@@ -21,7 +21,7 @@ export default class VisualFrame extends Frame {
       !(nextFrame instanceof VisualFrame)
     ) {
       throw new Error("Bad frame type.");
-    } else if (prevFrame.fileDataBytes !== nextFrame.fileDataBytes) {
+    } else if (prevFrame.size !== nextFrame.size) {
       throw new Error("Frames cannot have different sizes.");
     }
   };
@@ -30,7 +30,7 @@ export default class VisualFrame extends Frame {
   public copy = () => new VisualFrame(this.pixels.slice(0), this.duration);
 
   /// [(1)type][(2)duration][(ledsCount*3)pixels]
-  public get fileDataBytes(): number {
+  public get size(): number {
     const typeSize = 1;
     const durationSize = 2;
     const colorsSize = this.pixels.length * 3;
@@ -58,8 +58,8 @@ export default class VisualFrame extends Frame {
     return new VisualFrame(pixels, duration ?? this.duration);
   };
 
-  public toFileData = (): Uint8Array => {
-    const size = this.fileDataBytes;
+  public toBytes = (): Uint8Array => {
+    const size = this.size;
 
     let dataPointer: number = 0;
 

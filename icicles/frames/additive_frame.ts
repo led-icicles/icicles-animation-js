@@ -55,7 +55,7 @@ export default class AdditiveFrame extends Frame {
   };
 
   // [(1 - uint8)type][(2 - uint16)duration][(2 - uint16)size][(x * 5)changedPixels]
-  get fileDataBytes(): number {
+  get size(): number {
     const typeSize = 1;
     const durationSize = 2;
     const sizeFieldSize = 2;
@@ -64,8 +64,8 @@ export default class AdditiveFrame extends Frame {
     return typeSize + durationSize + sizeFieldSize + changedPixelsSize;
   }
 
-  public toFileData = (): Uint8Array => {
-    const size = this.fileDataBytes;
+  public toBytes = (): Uint8Array => {
+    const size = this.size;
 
     let dataPointer: number = 0;
 

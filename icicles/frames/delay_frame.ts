@@ -8,14 +8,14 @@ export default class DelayFrame extends Frame {
   }
 
   /// [(1)type][(2)duration]
-  get fileDataBytes(): number {
+  get size(): number {
     const headerSize = 1;
     const durationSize = 2;
     return headerSize + durationSize;
   }
 
-  toFileData = (): Uint8Array => {
-    const size = this.fileDataBytes;
+  toBytes = (): Uint8Array => {
+    const size = this.size;
 
     let dataPointer: number = 0;
 

@@ -8,25 +8,83 @@ import VisualFrame from "./frames/visual_frame";
 
 type AnimationOptions = {
   optimize?: boolean;
+  version?: 1;
 };
+const newestAnimationVersion = 1;
+
+interface AnimationHeaderData {
+  readonly version: number;
+  readonly animationName: string;
+  readonly xCount: number;
+  readonly yCount: number;
+}
+
+export class AnimationHeader implements AnimationHeaderData {
+  readonly version: number;
+  readonly animationName: string;
+  readonly xCount: number;
+  readonly yCount: number;
+
+  constructor(data: AnimationHeaderData) {
+    this.version = data.version;
+    this.animationName = data.animationName;
+    this.xCount = data.xCount;
+    this.yCount = data.yCount;
+  }
+
+  public get ledsCount(): number {
+    return this.xCount * this.yCount;
+  }
+
+  public get size(): number {
+    /// NULL CHAR IS USED AS THE SEPARATOR
+    const NULL_CHAR_BYTE_COUNT = 1;
+
+    const animationNameSize = this.animationName.length + NULL_CHAR_BYTE_COUNT;
+
+    return animationNameSize;
+  }
+
+  private _getEncodedAnimationName = (): Uint8Array => {
+    const encoder = new TextEncoder();
+    const encodedName = encoder.encode(this.animationName);
+    const encodednNameWithNullChar = new Uint8Array(encodedName.length + 1);
+    encodednNameWithNullChar.set(encodedName);
+    const NULL_CHAR = 0;
+    encodednNameWithNullChar[encodedName.length] = NULL_CHAR;
+    return encodednNameWithNullChar;
+  };
+
+  public encode = (): Uint8Array => {
+    return this._getEncodedAnimationName();
+  };
+}
 
 export default class Animation {
   private readonly _frames: Array<Frame> = [];
+  private readonly _header: AnimationHeader;
 
   /// Current pixels view
   private currentView: VisualFrame;
   public readonly optimize: boolean = false;
 
   constructor(
-    public readonly animationName: string,
-    public readonly ledsCount: number,
+    animationName: string,
+    xCount: number,
+    yCount: number,
     options?: AnimationOptions
   ) {
+    this._header = new AnimationHeader({
+      animationName: animationName,
+      xCount,
+      yCount,
+      version: options?.version ?? newestAnimationVersion,
+    });
     /// Before each animation leds are set to black color.
     /// But black color is not displayed. To set all pixels to black,
     /// you should add frame, even [DelayFrame]
     this.currentView = new VisualFrame(
-      new Array(ledsCount).fill(new Color(0, 0, 0)),
+      new Array(this._header.ledsCount).fill(new Color(0, 0, 0)),
       /// zero duration - this is just a placeholder
       0
     );
@@ -40,11 +98,11 @@ export default class Animation {
       throw new Error("Frame was not provided.");
     } else if (!(newFrame instanceof VisualFrame)) {
       throw new Error("Unsupported frame type.");
-    } else if (newFrame.pixels.length !== this.ledsCount) {
+    } else if (newFrame.pixels.length !== this._header.ledsCount) {
       throw new Error(
         `Unsupported frame length. ` +
           `Current: ${newFrame.pixels.length}, ` +
-          `required: ${this.ledsCount}`
+          `required: ${this._header.ledsCount}`
       );
     }
 
@@ -57,14 +115,14 @@ export default class Animation {
       const noPixelsChanges = changedPixels.length === 0;
 
       if (noPixelsChanges) {
+        /// TODO: We can then merge delay frames if possible.
         this._frames.push(new DelayFrame(newFrame.duration));
       } else {
         const additiveFrame = new AdditiveFrame(
           changedPixels,
           newFrame.duration
         );
-        const isAdditiveFrameSmaller =
-          additiveFrame.fileDataBytes < newFrame.fileDataBytes;
+        const isAdditiveFrameSmaller = additiveFrame.size < newFrame.size;
         if (isAdditiveFrameSmaller) {
           this._frames.push(additiveFrame);
         } else {
@@ -79,42 +137,32 @@ export default class Animation {
     this.currentView = newFrame;
   };
 
-  public getEncodedAnimationName = (): Uint8Array => {
-    const encoder = new TextEncoder();
-    const encodedName = encoder.encode(this.animationName);
-    const encodednNameWithNullChar = new Uint8Array(encodedName.length + 1);
-    encodednNameWithNullChar.set(encodedName);
-    const NULL_CHAR = 0;
-    encodednNameWithNullChar[encodedName.length] = NULL_CHAR;
-    return encodednNameWithNullChar;
-  };
-
-  public get fileDataBytes(): number {
-    let size = 0;
+  /// Animation size in bytes
+  public get size(): number {
+    let framesDataSize = 0;
     for (let i = 0; i < this._frames.length; i++) {
       const frame = this._frames[i];
-      size += frame.fileDataBytes;
+      framesDataSize += frame.size;
     }
-    const NULL_CHAR_BYTE_COUNT = 1;
-    const nameSize = this.animationName.length + NULL_CHAR_BYTE_COUNT;
-    return size + nameSize;
+
+    return this._header.size + framesDataSize;
   }
 
-  toFileData = (): Uint8Array => {
+  toBytes = (): Uint8Array => {
     if (this._frames.length === 0) {
       throw new Error("Animation is empty.");
     }
 
-    const data = new Uint8Array(this.fileDataBytes);
+    const data = new Uint8Array(this.size);
 
-    const encodedName = this.getEncodedAnimationName();
-    const nameSize = encodedName.length;
-    data.set(encodedName);
+    const encodedHeader = this._header.encode();
+    const headerSize = encodedHeader.length;
+    data.set(encodedHeader);
 
-    let offset = nameSize;
+    let offset = headerSize;
     for (const frame of this._frames) {
-      const frameBytes = frame.toFileData();
-      const frameSize = frame.fileDataBytes;
+      const frameBytes = frame.toBytes();
+      const frameSize = frame.size;
 
       data.set(frameBytes, offset);
 
@@ -124,18 +172,18 @@ export default class Animation {
     return data;
   };
 
-  toFile = async (path: string = `./${this.animationName}.anim`) => {
+  toFile = async (path: string) => {
     const stream = fs.createWriteStream(path, { encoding: "binary" });
 
     await new Promise<void>((res, rej) =>
-      stream.write(this.getEncodedAnimationName(), (err) => {
+      stream.write(this._header.encode(), (err) => {
         if (err) rej(err);
         res();
       })
     );
 
     for (const frame of this._frames) {
-      const frameBytes = frame.toFileData();
+      const frameBytes = frame.toBytes();
 
       await new Promise<void>((res, rej) =>
         stream.write(frameBytes, (err) => {

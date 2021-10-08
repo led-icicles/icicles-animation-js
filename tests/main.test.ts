@@ -34,7 +34,7 @@ describe("Animation works correctly", () => {
       animation.addFrame(icicles.toFrame(400));
     }
 
-    expect(animation.toFileData()).toMatchSnapshot();
+    expect(animation.toBytes()).toMatchSnapshot();
   });
 
   test("Creates AdditiveFrame corretly", () => {
@@ -49,6 +49,6 @@ describe("Animation works correctly", () => {
       animation.addFrame(icicles.toFrame(400));
     }
 
-    expect(animation.toFileData()).toMatchSnapshot();
+    expect(animation.toBytes()).toMatchSnapshot();
   });
 });
