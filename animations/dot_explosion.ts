@@ -9,12 +9,14 @@ const compile = async () => {
   const iciclesCount = 20;
   const ledsPerIcicle = 15;
   const icicles = new Icicles(iciclesCount, ledsPerIcicle);
-  const animation = new Animation(
-    `Eksplozja kulek`,
-    iciclesCount,
-    ledsPerIcicle,
-    { optimize, version: 1 }
-  );
+  const animation = new Animation({
+    name: "Eksplozja kulek",
+    optimize,
+    version: 1,
+    xCount: iciclesCount,
+    yCount: ledsPerIcicle,
+    loops: 1,
+  });
 
   const explode = (color: Color) => {
     for (let i = 0; i < iciclesCount / 2; i++) {
