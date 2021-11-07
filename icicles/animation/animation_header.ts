@@ -125,16 +125,22 @@ export class AnimationHeader implements AnimationHeaderData {
   private _getEncodedAnimationNameV2 = (): Uint8Array => {
     const isLittleEndian = this.isLittleEndian;
 
+    const size = this.size;
+
+    console.log(
+      `Encoding header: little_endian=${isLittleEndian}, size=${size}bytes`
+    );
+
     let offset = 0;
 
-    const bytes = new Uint8Array(this.size);
+    const bytes = new Uint8Array(size);
     const dataView = new DataView(bytes.buffer);
-    console.log(`Allocating header bytes(size=${bytes.length}) → "${bytes}".`);
+    console.log(`Allocating header bytes → [${bytes}].`);
 
     console.log(`Writing version number: "${this.versionNumber}".`);
     dataView.setUint16(offset, this.versionNumber, isLittleEndian);
     offset += UINT_16_SIZE_IN_BYTES;
-    console.log(`Version number has been written → "${bytes}".`);
+    console.log(`Version number has been written → [${bytes}].`);
 
     const encoder = new TextEncoder();
     console.log(`Encoding name: "${this.name}".`);
@@ -145,19 +151,19 @@ export class AnimationHeader implements AnimationHeaderData {
 
     const NULL_CHAR = 0;
     bytes[offset++] = NULL_CHAR;
-    console.log(`Name has been written → "${bytes}".`);
+    console.log(`Name has been written → [${bytes}].`);
     console.log(`Encoding xCount: "${this.xCount}".`);
     dataView.setUint8(offset++, this.xCount);
-    console.log(`xCount has been written → "${bytes}".`);
+    console.log(`xCount has been written → [${bytes}].`);
     console.log(`Encoding yCount: "${this.yCount}".`);
     dataView.setUint8(offset++, this.yCount);
-    console.log(`yCount has been written → "${bytes}".`);
+    console.log(`yCount has been written → [${bytes}].`);
     console.log(`Encoding loopsCount: "${this.loopsCount}".`);
     dataView.setUint16(offset, this.loopsCount, isLittleEndian);
     offset += UINT_16_SIZE_IN_BYTES;
-    console.log(`loopsCount has been written → "${bytes}".`);
+    console.log(`loopsCount has been written → [${bytes}].`);
 
-    console.log(`Animation file header encoded → "${bytes}".`);
+    console.log(`Animation file header encoded → [${bytes}].`);
     return bytes;
   };
 
