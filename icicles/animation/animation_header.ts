@@ -94,7 +94,7 @@ export class AnimationHeader implements AnimationHeaderData {
       );
     }
 
-    this.loopsCount = Math.ceil(loops ?? 1);
+    this.loopsCount = Math.floor(loops ?? 1);
   }
 
   public get ledsCount(): number {
