@@ -12,10 +12,10 @@ const compile = async () => {
   const animation = new Animation({
     name: "Eksplozja kulek",
     optimize,
-    version: 1,
+    versionNumber: 1,
     xCount: iciclesCount,
     yCount: ledsPerIcicle,
-    loops: 1,
+    loopsCount: 1,
   });
 
   const explode = (color: Color) => {

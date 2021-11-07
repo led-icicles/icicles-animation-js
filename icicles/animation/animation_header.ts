@@ -1,6 +1,11 @@
 import { TextEncoder } from "util";
 import { getNonAscii, isAscii } from "../utils/regex";
-import { UINT_16_MAX_SIZE, UINT_8_MAX_SIZE } from "../utils/sizes";
+import {
+  UINT_16_MAX_SIZE,
+  UINT_16_SIZE_IN_BYTES,
+  UINT_8_MAX_SIZE,
+  UINT_8_SIZE_IN_BYTES,
+} from "../utils/sizes";
 
 export const NEWEST_ANIMATION_VERSION: number = 1;
 export const MIN_ANIMATION_VERSION: number = 1;
@@ -9,13 +14,13 @@ export interface AnimationHeaderData {
   readonly name: string;
   readonly xCount: number;
   readonly yCount: number;
-  readonly loops?: number;
-  readonly version?: number;
+  readonly loopsCount?: number;
+  readonly versionNumber?: number;
 }
 
 export class AnimationHeader implements AnimationHeaderData {
   /**  **uint16** max number: `65535` */
-  readonly version: number;
+  readonly versionNumber: number;
   readonly name: string;
   /**  **uint8** max number: `255` */
   readonly xCount: number;
@@ -25,9 +30,15 @@ export class AnimationHeader implements AnimationHeaderData {
    * 0 - infinite (or device maximum loop iterations - if defined)
    * 1 - is a default value
    */
-  readonly loops: number;
+  readonly loopsCount: number;
 
-  constructor({ xCount, yCount, version, name, loops }: AnimationHeaderData) {
+  constructor({
+    xCount,
+    yCount,
+    versionNumber: version,
+    name,
+    loopsCount: loops,
+  }: AnimationHeaderData) {
     if (isNaN(xCount)) {
       throw new Error("Value of xCount must be a number.");
     }
@@ -59,7 +70,7 @@ export class AnimationHeader implements AnimationHeaderData {
           `"${MIN_ANIMATION_VERSION}" and "${NEWEST_ANIMATION_VERSION}".`
       );
     }
-    this.version = version ?? NEWEST_ANIMATION_VERSION;
+    this.versionNumber = version ?? NEWEST_ANIMATION_VERSION;
 
     if (!name) {
       throw new Error("Animation name is required.");
@@ -83,7 +94,7 @@ export class AnimationHeader implements AnimationHeaderData {
       );
     }
 
-    this.loops = Math.ceil(loops ?? 1);
+    this.loopsCount = Math.ceil(loops ?? 1);
   }
 
   public get ledsCount(): number {
@@ -94,33 +105,63 @@ export class AnimationHeader implements AnimationHeaderData {
     /// NULL CHAR IS USED AS THE SEPARATOR
     const NULL_CHAR_BYTE_COUNT = 1;
 
+    const versionSize = UINT_16_SIZE_IN_BYTES;
     const animationNameSize = this.name.length + NULL_CHAR_BYTE_COUNT;
+    const xCountSize = UINT_8_SIZE_IN_BYTES;
+    const yCountSize = UINT_8_SIZE_IN_BYTES;
+    const loopsSize = UINT_16_SIZE_IN_BYTES;
 
-    return animationNameSize;
+    return [
+      versionSize,
+      animationNameSize,
+      xCountSize,
+      yCountSize,
+      loopsSize,
+    ].reduce((a, b) => a + b, 0);
   }
 
-  private _getEncodedAnimationNameV1 = (): Uint8Array => {
-    const encoder = new TextEncoder();
-    const encodedName = encoder.encode(this.name);
-    const encodednNameWithNullChar = new Uint8Array(encodedName.length + 1);
-    encodednNameWithNullChar.set(encodedName);
-    const NULL_CHAR = 0;
-    encodednNameWithNullChar[encodedName.length] = NULL_CHAR;
-    return encodednNameWithNullChar;
-  };
+  readonly isLittleEndian: boolean = true;
 
   private _getEncodedAnimationNameV2 = (): Uint8Array => {
-    throw new Error("Unimplemented.");
+    const isLittleEndian = this.isLittleEndian;
+
+    let offset = 0;
+
+    const bytes = new Uint8Array(this.size);
+    const dataView = new DataView(bytes.buffer);
+    console.log(`Allocating header bytes(size=${bytes.length}) → "${bytes}".`);
+
+    console.log(`Writing version number: "${this.versionNumber}".`);
+    dataView.setUint16(offset, this.versionNumber, isLittleEndian);
+    offset += UINT_16_SIZE_IN_BYTES;
+    console.log(`Version number has been written → "${bytes}".`);
+
+    const encoder = new TextEncoder();
+    console.log(`Encoding name: "${this.name}".`);
+    const encodedName = encoder.encode(this.name);
+    console.log(`Name encoded: "${encodedName}".`);
+    bytes.set(encodedName, offset);
+    offset += encodedName.length;
+
+    const NULL_CHAR = 0;
+    bytes[offset++] = NULL_CHAR;
+    console.log(`Name has been written → "${bytes}".`);
+    console.log(`Encoding xCount: "${this.xCount}".`);
+    dataView.setUint8(offset++, this.xCount);
+    console.log(`xCount has been written → "${bytes}".`);
+    console.log(`Encoding yCount: "${this.yCount}".`);
+    dataView.setUint8(offset++, this.yCount);
+    console.log(`yCount has been written → "${bytes}".`);
+    console.log(`Encoding loopsCount: "${this.loopsCount}".`);
+    dataView.setUint16(offset, this.loopsCount, isLittleEndian);
+    offset += UINT_16_SIZE_IN_BYTES;
+    console.log(`loopsCount has been written → "${bytes}".`);
+
+    console.log(`Animation file header encoded → "${bytes}".`);
+    return bytes;
   };
 
   public encode = (): Uint8Array => {
-    switch (this.version) {
-      case 1:
-        return this._getEncodedAnimationNameV1();
-      case 2:
-        return this._getEncodedAnimationNameV2();
-      default:
-        throw new Error(`Unsupported animation version: ${this.version}`);
-    }
+    return this._getEncodedAnimationNameV2();
   };
 }

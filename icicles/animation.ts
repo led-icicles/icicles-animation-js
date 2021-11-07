@@ -26,8 +26,8 @@ export default class Animation {
       name: options.name,
       xCount: options.xCount,
       yCount: options.yCount,
-      loops: options.loops,
-      version: options.version,
+      loopsCount: options.loopsCount,
+      versionNumber: options.versionNumber,
     });
     /// Before each animation leds are set to black color.
     /// But black color is not displayed. To set all pixels to black,
