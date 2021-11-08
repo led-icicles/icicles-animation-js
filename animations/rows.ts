@@ -2,7 +2,7 @@ import { Animation } from "../src/animation";
 import { Color, Colors } from "../src/color";
 import { Icicles } from "../src/icicles";
 
-const optimize = false;
+const optimize = true;
 
 const compile = async () => {
   const xCount = 20;
@@ -18,11 +18,11 @@ const compile = async () => {
   });
 
   const colorTrip = (color: Color) => {
-    for (let x = 0; x < xCount; x++) {
-      for (let y = 0; y < yCount; y++) {
+    for (let y = 0; y < yCount; y++) {
+      for (let x = 0; x < xCount; x++) {
         icicles.setAllPixelsColor(new Color(0, 0, 0));
         icicles.setPixelColor(x, y, color);
-        animation.addFrame(icicles.toFrame(100));
+        animation.addFrame(icicles.toFrame(20));
       }
     }
   };

@@ -31,6 +31,9 @@ export class VisualFrame extends Frame {
             return data;
         };
     }
+    static filled(pixels, color, duration) {
+        return new VisualFrame(new Array(pixels).fill(color), duration);
+    }
     /// [(1)type][(2)duration][(ledsCount*3)pixels]
     get size() {
         const typeSize = 1;

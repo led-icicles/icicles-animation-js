@@ -5,6 +5,7 @@ export declare class VisualFrame extends Frame {
     readonly duration: number;
     readonly type: FrameType;
     constructor(pixels: Array<Color>, duration: number);
+    static filled(pixels: number, color: Color, duration: number): VisualFrame;
     static assertVisualFramesCompatibility: (prevFrame: VisualFrame, nextFrame: VisualFrame) => void;
     copy: () => VisualFrame;
     copyWith: ({ duration, pixels, }?: {

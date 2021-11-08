@@ -11,6 +11,10 @@ export class VisualFrame extends Frame {
     super(duration);
   }
 
+  public static filled(pixels: number, color: Color, duration: number) {
+    return new VisualFrame(new Array(pixels).fill(color), duration);
+  }
+
   /// Verify wether two visual frames are compatibility
   public static assertVisualFramesCompatibility = (
     prevFrame: VisualFrame,

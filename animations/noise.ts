@@ -1,12 +1,14 @@
-import Animation from "../icicles/animation";
-import Color, { Colors } from "../icicles/color";
-import Icicles from "../icicles/icicles";
+import { Animation } from "../src/animation";
+import { Color, Colors } from "../src/color";
+import { Icicles } from "../src/icicles";
 
 const optimize = false;
 
 const compile = async () => {
-  const icicles = new Icicles(20, 15);
-  const anim = new Animation(`Szum`, 300, { optimize });
+  const xCount = 20;
+  const yCount = 15;
+  const icicles = new Icicles(xCount, yCount);
+  const anim = new Animation({ name: "Szum", optimize, xCount, yCount });
 
   const addNoiseFrame = (color: Color) => {
     const newPixels = icicles.pixels.map(() =>
@@ -29,11 +31,7 @@ const compile = async () => {
   addNoisePart(Colors.violet);
   addNoisePart(Colors.orange);
 
-  await anim.toFile(`./szum${optimize ? "-optimized" : ""}.anim`);
-
-  // const readedFile = readFileSync('./123.anim' ??`./optimized-${optimize}.anim`);
-  // const file = Uint8Array.from(readedFile);
-  // console.log("readed", file);
+  await anim.toFile(`./compiled/szum${optimize ? "-optimized" : ""}.anim`);
 };
 
 compile();
