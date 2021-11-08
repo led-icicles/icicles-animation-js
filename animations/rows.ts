@@ -22,14 +22,13 @@ const compile = async () => {
       for (let x = 0; x < xCount; x++) {
         icicles.setAllPixelsColor(new Color(0, 0, 0));
         icicles.setPixelColor(x, y, color);
-        animation.addFrame(icicles.toFrame(20));
+        animation.addFrame(icicles.toFrame(10));
       }
     }
   };
 
   colorTrip(Colors.red);
   colorTrip(Colors.green);
-  colorTrip(Colors.blue);
 
   await animation.toFile(`./compiled/rows${optimize ? "-optimized" : ""}.anim`);
   await Animation.fromFile(

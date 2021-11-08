@@ -6,7 +6,7 @@ const optimize = false;
 
 const compile = async () => {
   const xCount = 20;
-  const yCount = 15;
+  const yCount = 30;
   const icicles = new Icicles(xCount, yCount);
   const anim = new Animation({ name: "Szum", optimize, xCount, yCount });
 

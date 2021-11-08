@@ -134,22 +134,25 @@ export class Animation {
         return this._header;
     }
     *play() {
-        let currentView = new VisualFrame(new Array(this.header.pixelsCount).fill(new Color(0, 0, 0)), 0);
-        for (const frame of this._frames) {
-            if (frame instanceof VisualFrame) {
-                currentView = frame;
-                yield frame;
-            }
-            else if (frame instanceof DelayFrame) {
-                currentView = currentView.copyWith({ duration: frame.duration });
-                yield currentView;
-            }
-            else if (frame instanceof AdditiveFrame) {
-                currentView = frame.mergeOnto(currentView);
-                yield currentView;
-            }
-            else {
-                throw new Error(`Unsupported frame type: "${frame.type}"`);
+        let loop = 0;
+        while (loop++ < this.header.loopsCount) {
+            let currentView = VisualFrame.filled(this.header.pixelsCount, new Color(0, 0, 0), 0);
+            for (const frame of this._frames) {
+                if (frame instanceof VisualFrame) {
+                    currentView = frame;
+                    yield frame;
+                }
+                else if (frame instanceof DelayFrame) {
+                    currentView = currentView.copyWith({ duration: frame.duration });
+                    yield currentView;
+                }
+                else if (frame instanceof AdditiveFrame) {
+                    currentView = frame.mergeOnto(currentView);
+                    yield currentView;
+                }
+                else {
+                    throw new Error(`Unsupported frame type: "${frame.type}"`);
+                }
             }
         }
     }
