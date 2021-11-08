@@ -79,6 +79,10 @@ const compile = async () => {
   await animation.toFile(
     `./eksplozja-kulek${optimize ? "-optimized" : ""}.anim`
   );
+
+  await Animation.fromFile(
+    `./eksplozja-kulek${optimize ? "-optimized" : ""}.anim`
+  );
 };
 
 compile();

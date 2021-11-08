@@ -1,10 +1,11 @@
 import { IndexedColor } from "../color";
+import { UINT_16_MAX_SIZE } from "../utils/sizes";
 import { Frame, FrameType } from "./frame";
 import VisualFrame from "./visual_frame";
 
 export default class AdditiveFrame extends Frame {
   public readonly type: FrameType = FrameType.AdditiveFrame;
-  static readonly maxChangedPixelIndex: number = 65535;
+  static readonly maxChangedPixelIndex: number = UINT_16_MAX_SIZE;
 
   constructor(
     public readonly changedPixels: Array<IndexedColor>,

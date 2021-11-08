@@ -1,6 +1,6 @@
-import { TextEncoder } from "util";
-import { getNonAscii, isAscii } from "../utils/regex";
 import {
+  NULL_CHAR,
+  NULL_CHAR_SIZE_IN_BYTES,
   UINT_16_MAX_SIZE,
   UINT_16_SIZE_IN_BYTES,
   UINT_8_MAX_SIZE,
@@ -21,6 +21,7 @@ export interface AnimationHeaderData {
 export class AnimationHeader implements AnimationHeaderData {
   /**  **uint16** max number: `65535` */
   readonly versionNumber: number;
+  /** utf-8 animation name */
   readonly name: string;
   /**  **uint8** max number: `255` */
   readonly xCount: number;
@@ -31,6 +32,10 @@ export class AnimationHeader implements AnimationHeaderData {
    * 1 - is a default value
    */
   readonly loopsCount: number;
+
+  public get pixelsCount(): number {
+    return this.xCount * this.yCount;
+  }
 
   constructor({
     xCount,
@@ -75,12 +80,6 @@ export class AnimationHeader implements AnimationHeaderData {
     if (!name) {
       throw new Error("Animation name is required.");
     }
-    if (!isAscii(name)) {
-      throw new Error(
-        `Value of "name" can contain only ascii characters. ` +
-          `Unsupported characters: ${getNonAscii(name)}.`
-      );
-    }
     this.name = name;
 
     if (loops !== undefined && isNaN(loops)) {
@@ -103,10 +102,9 @@ export class AnimationHeader implements AnimationHeaderData {
 
   public get size(): number {
     /// NULL CHAR IS USED AS THE SEPARATOR
-    const NULL_CHAR_BYTE_COUNT = 1;
 
     const versionSize = UINT_16_SIZE_IN_BYTES;
-    const animationNameSize = this.name.length + NULL_CHAR_BYTE_COUNT;
+    const animationNameSize = this.name.length + NULL_CHAR_SIZE_IN_BYTES;
     const xCountSize = UINT_8_SIZE_IN_BYTES;
     const yCountSize = UINT_8_SIZE_IN_BYTES;
     const loopsSize = UINT_16_SIZE_IN_BYTES;
@@ -120,10 +118,11 @@ export class AnimationHeader implements AnimationHeaderData {
     ].reduce((a, b) => a + b, 0);
   }
 
-  readonly isLittleEndian: boolean = true;
+  static readonly isLittleEndian: boolean = true;
 
   private _getEncodedAnimationNameV2 = (): Uint8Array => {
-    const isLittleEndian = this.isLittleEndian;
+    const isBrowser = typeof window != "undefined";
+    const isLittleEndian = AnimationHeader.isLittleEndian;
 
     const size = this.size;
 
@@ -142,14 +141,15 @@ export class AnimationHeader implements AnimationHeaderData {
     offset += UINT_16_SIZE_IN_BYTES;
     console.log(`Version number has been written → [${bytes}].`);
 
-    const encoder = new TextEncoder();
+    const encoder = isBrowser
+      ? new TextEncoder()
+      : (() => new (require("util").TextEncoder)())();
     console.log(`Encoding name: "${this.name}".`);
     const encodedName = encoder.encode(this.name);
     console.log(`Name encoded: "${encodedName}".`);
     bytes.set(encodedName, offset);
     offset += encodedName.length;
 
-    const NULL_CHAR = 0;
     bytes[offset++] = NULL_CHAR;
     console.log(`Name has been written → [${bytes}].`);
     console.log(`Encoding xCount: "${this.xCount}".`);
@@ -169,5 +169,48 @@ export class AnimationHeader implements AnimationHeaderData {
 
   public encode = (): Uint8Array => {
     return this._getEncodedAnimationNameV2();
+  };
+
+  public static decode = (
+    buffer: Buffer
+  ): { header: AnimationHeader; data: Uint8Array } => {
+    const isBrowser = typeof window != "undefined";
+
+    let offset: number = 0;
+
+    const bytes = new Uint8Array(buffer);
+    const dataView = new DataView(bytes.buffer);
+    const versionNumber = dataView.getUint16(
+      offset,
+      AnimationHeader.isLittleEndian
+    );
+    offset += UINT_16_SIZE_IN_BYTES;
+    const nameEndIndex = buffer.indexOf(NULL_CHAR, offset);
+    const nameBuffer = buffer.slice(offset, nameEndIndex);
+    const name = (
+      isBrowser
+        ? new TextDecoder()
+        : (() => new (require("util").TextDecoder)())()
+    ).decode(nameBuffer);
+    offset = nameEndIndex + NULL_CHAR_SIZE_IN_BYTES;
+    const xCount = dataView.getUint8(offset++);
+    const yCount = dataView.getUint8(offset++);
+    const loopsCount = dataView.getUint16(
+      offset,
+      AnimationHeader.isLittleEndian
+    );
+    console.log("loopsCount", loopsCount);
+    offset += UINT_16_SIZE_IN_BYTES;
+
+    return {
+      header: new AnimationHeader({
+        xCount,
+        yCount,
+        name,
+        loopsCount,
+        versionNumber,
+      }),
+      data: bytes.slice(offset),
+    };
   };
 }

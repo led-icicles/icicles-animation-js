@@ -14,14 +14,13 @@ var FrameType;
     /// Therefore it is possible to index `65535` pixels (leds)
     FrameType[FrameType["AdditiveFrame"] = 3] = "AdditiveFrame";
 })(FrameType = exports.FrameType || (exports.FrameType = {}));
-var Frame = /** @class */ (function () {
-    function Frame(duration) {
+class Frame {
+    constructor(duration) {
         this.duration = duration;
         if (typeof duration !== "number" || duration > Frame.maxDuration) {
             throw new Error("Not valid duration provided. Duration should be larger or equal 0 and smaller than [Frame.maxDuration].");
         }
     }
-    Frame.maxDuration = 65535;
-    return Frame;
-}());
+}
 exports.Frame = Frame;
+Frame.maxDuration = 65535;

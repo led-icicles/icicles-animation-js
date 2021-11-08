@@ -1,13 +1,14 @@
-import fs from "fs";
 import {
   AnimationHeader,
   AnimationHeaderData,
 } from "./animation/animation_header";
-import Color from "./color";
+import Color, { IndexedColor } from "./color";
 import AdditiveFrame from "./frames/additive_frame";
 import DelayFrame from "./frames/delay_frame";
-import { Frame } from "./frames/frame";
+import { Frame, FrameType } from "./frames/frame";
 import VisualFrame from "./frames/visual_frame";
+import { UINT_16_SIZE_IN_BYTES } from "./utils/sizes";
+import type * as fsTypes from "fs";
 
 export type AnimationOptions = {
   optimize?: boolean;
@@ -42,9 +43,15 @@ export default class Animation {
     }
   }
 
-  addFrame = (newFrame: VisualFrame) => {
+  addFrame = (newFrame: Frame) => {
     if (!newFrame) {
       throw new Error("Frame was not provided.");
+    } else if (newFrame instanceof DelayFrame) {
+      this._frames.push(newFrame);
+      return;
+    } else if (newFrame instanceof AdditiveFrame) {
+      this._frames.push(newFrame);
+      return;
     } else if (!(newFrame instanceof VisualFrame)) {
       throw new Error("Unsupported frame type.");
     } else if (newFrame.pixels.length !== this._header.ledsCount) {
@@ -122,6 +129,12 @@ export default class Animation {
   };
 
   toFile = async (path: string) => {
+    const isBrowser = typeof window !== "undefined";
+    if (isBrowser) {
+      throw new Error("This method is not supported in browser env");
+    }
+
+    const fs: typeof fsTypes = require("fs");
     const stream = fs.createWriteStream(path, { encoding: "binary" });
     try {
       await new Promise<void>((res, rej) =>
@@ -148,5 +161,92 @@ export default class Animation {
       fs.unlinkSync(path);
       throw err;
     }
+  };
+
+  public static fromFile = async (path: string): Promise<Animation> => {
+    const isBrowser = typeof window !== "undefined";
+    if (isBrowser) {
+      throw new Error("This method is not supported in browser env");
+    }
+
+    const fs: typeof fsTypes = require("fs");
+    const buffer = await fs.promises.readFile(path);
+    return Animation.decode(buffer);
+  };
+
+  public static decode = async (buffer: Buffer): Promise<Animation> => {
+    const { header, data } = AnimationHeader.decode(buffer);
+    console.log({ ...header });
+
+    const animation = new Animation({
+      ...header,
+      optimize: false,
+    });
+
+    const pixelsCount = header.pixelsCount;
+
+    let offset = 0;
+    const dataView = new DataView(data.buffer);
+
+    while (offset < data.length) {
+      const frameType: FrameType = dataView.getUint8(offset++);
+      switch (frameType) {
+        case FrameType.VisualFrame: {
+          const duration = dataView.getUint16(offset, true);
+          offset += UINT_16_SIZE_IN_BYTES;
+          const endIndex = offset + pixelsCount * 3;
+          const pixels: Array<Color> = [];
+          for (let i = offset; i < endIndex; i += 3) {
+            const color = new Color(data[i], data[i + 1], data[i + 2]);
+            pixels.push(color);
+          }
+          offset = endIndex;
+
+          animation.addFrame(new VisualFrame(pixels, duration));
+          break;
+        }
+        case FrameType.DelayFrame: {
+          const duration = dataView.getUint16(offset, true);
+          offset += UINT_16_SIZE_IN_BYTES;
+
+          animation.addFrame(new DelayFrame(duration));
+
+          break;
+        }
+        case FrameType.AdditiveFrame: {
+          const duration = dataView.getUint16(offset, true);
+          offset += UINT_16_SIZE_IN_BYTES;
+          const changedPixelsCount = dataView.getUint16(offset, true);
+          offset += UINT_16_SIZE_IN_BYTES;
+
+          const endIndex = offset + changedPixelsCount * 5;
+          const pixels: Array<IndexedColor> = [];
+          for (let i = offset; i < endIndex; i += 3) {
+            const pixelIndex = dataView.getUint16(offset, true);
+            offset += UINT_16_SIZE_IN_BYTES;
+
+            const indexedColor = new IndexedColor(
+              pixelIndex,
+              new Color(data[i + 3], data[i + 4], data[i + 5])
+            );
+            pixels.push(indexedColor);
+          }
+          offset = endIndex;
+
+          animation.addFrame(new AdditiveFrame(pixels, duration));
+          break;
+        }
+        default:
+          throw new Error(`Unsupported frame type: ${frameType}`);
+      }
+    }
+
+    console.log(
+      `frames count: ${animation._frames.length}, size: ${(
+        animation.size / 1000
+      ).toFixed(2)} KB`
+    );
+
+    return animation;
   };
 }
