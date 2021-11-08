@@ -130,6 +130,11 @@ export class Animation {
     return this._frames.reduce((p, n) => p + n.duration, 0);
   }
 
+  //** Animation frames count - loops are included */
+  public get animationFramesCount(): number {
+    return this._frames.length * this.header.loopsCount;
+  }
+
   /// Animation size in bytes
   public get size(): number {
     let framesDataSize = 0;

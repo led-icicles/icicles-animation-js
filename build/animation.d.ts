@@ -16,6 +16,7 @@ export declare class Animation {
     constructor(options: AnimationOptions & AnimationHeaderData);
     addFrame: (newFrame: Frame) => void;
     get duration(): number;
+    get animationFramesCount(): number;
     get size(): number;
     toBytes: () => Uint8Array;
     toFile: (path: string) => Promise<void>;
