@@ -1,19 +1,23 @@
 export type ColorJson = { r: number; g: number; b: number };
 
 export class Color {
-  private readonly value: number;
+  private readonly _value: number;
+  public get value(): number {
+    return this._value;
+  }
+
   constructor(red: number, green: number, blue: number) {
-    this.value = (red << 16) + (green << 8) + blue;
+    this._value = (red << 16) + (green << 8) + blue;
   }
 
   public get red(): number {
-    return (this.value & 0xff0000) >> 16;
+    return (this._value & 0xff0000) >> 16;
   }
   public get green(): number {
-    return (this.value & 0x00ff00) >> 8;
+    return (this._value & 0x00ff00) >> 8;
   }
   public get blue(): number {
-    return this.value & 0x0000ff;
+    return this._value & 0x0000ff;
   }
 
   toJson = (): ColorJson => ({
