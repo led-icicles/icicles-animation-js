@@ -127,7 +127,7 @@ export class Animation {
 
   //** Animation duration in milliseconds */
   public get duration(): number {
-    return this.frames.reduce((p, n) => p + n.duration, 0);
+    return this._frames.reduce((p, n) => p + n.duration, 0);
   }
 
   /// Animation size in bytes
