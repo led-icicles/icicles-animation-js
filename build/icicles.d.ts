@@ -1,6 +1,6 @@
-import Color from "./color";
-import VisualFrame from "./frames/visual_frame";
-declare class Icicles {
+import { Color } from "./color";
+import { VisualFrame } from "./frames/visual_frame";
+export declare class Icicles {
     readonly iciclesCount: number;
     readonly ledsPerIcicle: number;
     readonly pixels: Array<Color>;
@@ -14,4 +14,3 @@ declare class Icicles {
     setPixels: (pixels: Array<Color>) => void;
     toFrame: (duration: number) => VisualFrame;
 }
-export default Icicles;

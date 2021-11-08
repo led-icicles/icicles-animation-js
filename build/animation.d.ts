@@ -4,7 +4,7 @@ import { Frame } from "./frames/frame";
 export declare type AnimationOptions = {
     optimize?: boolean;
 };
-export default class Animation {
+export declare class Animation {
     private readonly _frames;
     private readonly _header;
     private currentView;

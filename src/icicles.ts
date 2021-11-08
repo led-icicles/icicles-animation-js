@@ -1,7 +1,7 @@
-import Color from "./color";
-import VisualFrame from "./frames/visual_frame";
+import { Color } from "./color";
+import { VisualFrame } from "./frames/visual_frame";
 
-class Icicles {
+export class Icicles {
   public readonly pixels: Array<Color>;
   constructor(
     public readonly iciclesCount: number,
@@ -55,5 +55,3 @@ class Icicles {
     return new VisualFrame(copiedPixels, duration);
   };
 }
-
-export default Icicles;

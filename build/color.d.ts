@@ -36,4 +36,3 @@ export declare abstract class Colors {
     static readonly colors: Color[];
     getRandomColor: () => Color;
 }
-export default Color;

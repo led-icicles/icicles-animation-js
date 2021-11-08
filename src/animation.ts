@@ -2,19 +2,19 @@ import {
   AnimationHeader,
   AnimationHeaderData,
 } from "./animation/animation_header";
-import Color, { IndexedColor } from "./color";
+import { Color, IndexedColor } from "./color";
 import { Frame, FrameType } from "./frames/frame";
 import { UINT_16_SIZE_IN_BYTES } from "./utils/sizes";
 import type * as fsTypes from "fs";
-import DelayFrame from "./frames/delay_frame";
-import VisualFrame from "./frames/visual_frame";
-import AdditiveFrame from "./frames/additive_frame";
+import { DelayFrame } from "./frames/delay_frame";
+import { VisualFrame } from "./frames/visual_frame";
+import { AdditiveFrame } from "./frames/additive_frame";
 
 export type AnimationOptions = {
   optimize?: boolean;
 };
 
-export default class Animation {
+export class Animation {
   private readonly _frames: Array<Frame> = [];
   private readonly _header: AnimationHeader;
 

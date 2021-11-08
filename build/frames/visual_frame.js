@@ -1,6 +1,6 @@
-import Color from "../color";
+import { Color } from "../color";
 import { Frame, FrameType } from "./frame";
-export default class VisualFrame extends Frame {
+export class VisualFrame extends Frame {
     constructor(pixels, duration) {
         super(duration);
         this.pixels = pixels;

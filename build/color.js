@@ -62,5 +62,4 @@ Colors.colors = [
     Colors.oceanBlue,
     Colors.lawnGreen,
 ];
-export default Color;
 //# sourceMappingURL=color.js.map

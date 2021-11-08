@@ -1,5 +1,5 @@
 import { Frame, FrameType } from "./frame";
-export default class DelayFrame extends Frame {
+export declare class DelayFrame extends Frame {
     readonly duration: number;
     readonly type: FrameType;
     constructor(duration: number);

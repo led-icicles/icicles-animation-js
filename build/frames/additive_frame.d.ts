@@ -1,7 +1,7 @@
 import { IndexedColor } from "../color";
 import { Frame, FrameType } from "./frame";
-import VisualFrame from "./visual_frame";
-export default class AdditiveFrame extends Frame {
+import { VisualFrame } from "./visual_frame";
+export declare class AdditiveFrame extends Frame {
     readonly changedPixels: Array<IndexedColor>;
     readonly duration: number;
     readonly type: FrameType;

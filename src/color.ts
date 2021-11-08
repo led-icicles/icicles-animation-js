@@ -78,5 +78,3 @@ export abstract class Colors {
   public getRandomColor = (): Color =>
     Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
 }
-
-export default Color;

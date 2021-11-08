@@ -1,6 +1,6 @@
-import Color from "../color";
+import { Color } from "../color";
 import { Frame, FrameType } from "./frame";
-export default class VisualFrame extends Frame {
+export declare class VisualFrame extends Frame {
     readonly pixels: Array<Color>;
     readonly duration: number;
     readonly type: FrameType;

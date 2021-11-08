@@ -1,7 +1,7 @@
 import { UINT_16_MAX_SIZE } from "../utils/sizes";
 import { Frame, FrameType } from "./frame";
-import VisualFrame from "./visual_frame";
-export default class AdditiveFrame extends Frame {
+import { VisualFrame } from "./visual_frame";
+export class AdditiveFrame extends Frame {
     constructor(changedPixels, duration) {
         super(duration);
         this.changedPixels = changedPixels;

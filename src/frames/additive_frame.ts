@@ -1,9 +1,9 @@
 import { IndexedColor } from "../color";
 import { UINT_16_MAX_SIZE } from "../utils/sizes";
 import { Frame, FrameType } from "./frame";
-import VisualFrame from "./visual_frame";
+import { VisualFrame } from "./visual_frame";
 
-export default class AdditiveFrame extends Frame {
+export class AdditiveFrame extends Frame {
   public readonly type: FrameType = FrameType.AdditiveFrame;
   static readonly maxChangedPixelIndex: number = UINT_16_MAX_SIZE;
 

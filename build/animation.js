@@ -9,13 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a;
 import { AnimationHeader, } from "./animation/animation_header";
-import Color, { IndexedColor } from "./color";
+import { Color, IndexedColor } from "./color";
 import { FrameType } from "./frames/frame";
 import { UINT_16_SIZE_IN_BYTES } from "./utils/sizes";
-import DelayFrame from "./frames/delay_frame";
-import VisualFrame from "./frames/visual_frame";
-import AdditiveFrame from "./frames/additive_frame";
-export default class Animation {
+import { DelayFrame } from "./frames/delay_frame";
+import { VisualFrame } from "./frames/visual_frame";
+import { AdditiveFrame } from "./frames/additive_frame";
+export class Animation {
     constructor(options) {
         var _b;
         this._frames = [];

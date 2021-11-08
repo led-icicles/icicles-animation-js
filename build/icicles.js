@@ -1,6 +1,6 @@
-import Color from "./color";
-import VisualFrame from "./frames/visual_frame";
-class Icicles {
+import { Color } from "./color";
+import { VisualFrame } from "./frames/visual_frame";
+export class Icicles {
     constructor(iciclesCount, ledsPerIcicle) {
         this.iciclesCount = iciclesCount;
         this.ledsPerIcicle = ledsPerIcicle;
@@ -41,5 +41,4 @@ class Icicles {
         this.pixels = new Array(iciclesCount * ledsPerIcicle).fill(new Color(0, 0, 0));
     }
 }
-export default Icicles;
 //# sourceMappingURL=icicles.js.map

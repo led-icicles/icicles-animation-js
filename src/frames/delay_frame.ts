@@ -1,6 +1,6 @@
 import { Frame, FrameType } from "./frame";
 
-export default class DelayFrame extends Frame {
+export class DelayFrame extends Frame {
   public readonly type: FrameType = FrameType.DelayFrame;
 
   constructor(public readonly duration: number) {
