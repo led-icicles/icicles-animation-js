@@ -1,7 +1,7 @@
-import Animation from "../icicles/animation";
-import Color, { Colors } from "../icicles/color";
-import VisualFrame from "../icicles/frames/visual_frame";
-import Icicles from "../icicles/icicles";
+import { Animation } from "../src/animation";
+import { Color, Colors } from "../src/color";
+import { VisualFrame } from "../src/frames/visual_frame";
+import { Icicles } from "../src/icicles";
 
 const optimize = true;
 

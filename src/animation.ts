@@ -204,7 +204,6 @@ export class Animation {
 
   public static decode = async (buffer: Buffer): Promise<Animation> => {
     const { header, data } = AnimationHeader.decode(buffer);
-    console.log({ ...header });
 
     const animation = new Animation({
       ...header,
@@ -249,13 +248,16 @@ export class Animation {
 
           const endIndex = offset + changedPixelsCount * 5;
           const pixels: Array<IndexedColor> = [];
-          for (let i = offset; i < endIndex; i += 3) {
-            const pixelIndex = dataView.getUint16(offset, true);
-            offset += UINT_16_SIZE_IN_BYTES;
+          for (let i = offset; i < endIndex; i += 5) {
+            const pixelIndex = dataView.getUint16(i, true);
 
             const indexedColor = new IndexedColor(
               pixelIndex,
-              new Color(data[i + 3], data[i + 4], data[i + 5])
+              new Color(
+                data[i + UINT_16_SIZE_IN_BYTES],
+                data[i + UINT_16_SIZE_IN_BYTES + 1],
+                data[i + UINT_16_SIZE_IN_BYTES + 2]
+              )
             );
             pixels.push(indexedColor);
           }

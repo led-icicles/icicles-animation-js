@@ -90,8 +90,12 @@ export class AnimationHeader {
     }
     get size() {
         /// NULL CHAR IS USED AS THE SEPARATOR
+        const isBrowser = typeof window != "undefined";
+        const encoder = isBrowser
+            ? new TextEncoder()
+            : (() => new (require("util").TextEncoder)())();
         const versionSize = UINT_16_SIZE_IN_BYTES;
-        const animationNameSize = this.name.length + NULL_CHAR_SIZE_IN_BYTES;
+        const animationNameSize = encoder.encode(this.name).length + NULL_CHAR_SIZE_IN_BYTES;
         const xCountSize = UINT_8_SIZE_IN_BYTES;
         const yCountSize = UINT_8_SIZE_IN_BYTES;
         const loopsSize = UINT_16_SIZE_IN_BYTES;

@@ -175,7 +175,6 @@ Animation.fromFile = (path) => __awaiter(void 0, void 0, void 0, function* () {
 });
 Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
     const { header, data } = AnimationHeader.decode(buffer);
-    console.log(Object.assign({}, header));
     const animation = new Animation(Object.assign(Object.assign({}, header), { optimize: false }));
     const pixelsCount = header.pixelsCount;
     let offset = 0;
@@ -209,10 +208,9 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                 offset += UINT_16_SIZE_IN_BYTES;
                 const endIndex = offset + changedPixelsCount * 5;
                 const pixels = [];
-                for (let i = offset; i < endIndex; i += 3) {
-                    const pixelIndex = dataView.getUint16(offset, true);
-                    offset += UINT_16_SIZE_IN_BYTES;
-                    const indexedColor = new IndexedColor(pixelIndex, new Color(data[i + 3], data[i + 4], data[i + 5]));
+                for (let i = offset; i < endIndex; i += 5) {
+                    const pixelIndex = dataView.getUint16(i, true);
+                    const indexedColor = new IndexedColor(pixelIndex, new Color(data[i + UINT_16_SIZE_IN_BYTES], data[i + UINT_16_SIZE_IN_BYTES + 1], data[i + UINT_16_SIZE_IN_BYTES + 2]));
                     pixels.push(indexedColor);
                 }
                 offset = endIndex;
