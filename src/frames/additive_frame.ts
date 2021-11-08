@@ -1,5 +1,5 @@
 import { IndexedColor } from "../color";
-import { UINT_16_MAX_SIZE } from "../utils/sizes";
+import { UINT_16_MAX_SIZE } from "../src/utils/sizes";
 import { Frame, FrameType } from "./frame";
 import VisualFrame from "./visual_frame";
 
