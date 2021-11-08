@@ -156,6 +156,10 @@ export class Animation {
             }
         }
     }
+    //** Animation duration in milliseconds */
+    get duration() {
+        return this.frames.reduce((p, n) => p + n.duration, 0);
+    }
     /// Animation size in bytes
     get size() {
         let framesDataSize = 0;

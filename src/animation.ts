@@ -125,6 +125,11 @@ export class Animation {
     this.currentView = newFrame;
   };
 
+  //** Animation duration in milliseconds */
+  public get duration(): number {
+    return this.frames.reduce((p, n) => p + n.duration, 0);
+  }
+
   /// Animation size in bytes
   public get size(): number {
     let framesDataSize = 0;

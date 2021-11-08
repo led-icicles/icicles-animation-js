@@ -15,6 +15,7 @@ export declare class Animation {
     readonly optimize: boolean;
     constructor(options: AnimationOptions & AnimationHeaderData);
     addFrame: (newFrame: Frame) => void;
+    get duration(): number;
     get size(): number;
     toBytes: () => Uint8Array;
     toFile: (path: string) => Promise<void>;
