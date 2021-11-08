@@ -4,10 +4,11 @@ export declare type ColorJson = {
     b: number;
 };
 export declare class Color {
-    readonly red: number;
-    readonly green: number;
-    readonly blue: number;
+    private readonly value;
     constructor(red: number, green: number, blue: number);
+    get red(): number;
+    get green(): number;
+    get blue(): number;
     toJson: () => ColorJson;
     notEquals: (color: Color) => boolean;
     equals: (color: Color) => boolean;
