@@ -77,4 +77,3 @@ AdditiveFrame.fromVisualFrames = (prevFrame, nextFrame) => {
     const changedPixels = AdditiveFrame.getChangedPixelsFromFrames(prevFrame, nextFrame);
     return new AdditiveFrame(changedPixels, nextFrame.duration);
 };
-//# sourceMappingURL=additive_frame.js.map

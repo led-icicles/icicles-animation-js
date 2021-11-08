@@ -8,4 +8,3 @@ export var CATCodes;
     CATCodes[CATCodes["endTransfer"] = 5] = "endTransfer";
     CATCodes[CATCodes["transferEnded"] = 6] = "transferEnded";
 })(CATCodes || (CATCodes = {}));
-//# sourceMappingURL=cat_codes.js.map

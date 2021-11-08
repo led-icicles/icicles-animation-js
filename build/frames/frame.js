@@ -20,4 +20,3 @@ export class Frame {
     }
 }
 Frame.maxDuration = 65535;
-//# sourceMappingURL=frame.js.map

@@ -1,4 +1,4 @@
-import { IndexedColor } from "../color";
+import { IndexedColor } from "../utils/color";
 import { Frame, FrameType } from "./frame";
 import { VisualFrame } from "./visual_frame";
 export declare class AdditiveFrame extends Frame {

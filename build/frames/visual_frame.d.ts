@@ -1,4 +1,4 @@
-import { Color } from "../color";
+import { Color } from "../utils/color";
 import { Frame, FrameType } from "./frame";
 export declare class VisualFrame extends Frame {
     readonly pixels: Array<Color>;

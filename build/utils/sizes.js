@@ -5,4 +5,3 @@ export const UINT_8_MAX_SIZE = 255;
 export const UINT_8_SIZE_IN_BYTES = 1;
 export const NULL_CHAR = 0;
 export const NULL_CHAR_SIZE_IN_BYTES = 1;
-//# sourceMappingURL=sizes.js.map

@@ -138,4 +138,3 @@ AnimationHeader.decode = (buffer) => {
         data: bytes.slice(offset),
     };
 };
-//# sourceMappingURL=animation_header.js.map

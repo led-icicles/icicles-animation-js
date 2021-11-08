@@ -18,4 +18,3 @@ export var IciclesCodes;
     IciclesCodes[IciclesCodes["deleteAnimation"] = 200] = "deleteAnimation";
     IciclesCodes[IciclesCodes["restartESP"] = 255] = "restartESP";
 })(IciclesCodes || (IciclesCodes = {}));
-//# sourceMappingURL=icicles_codes.js.map

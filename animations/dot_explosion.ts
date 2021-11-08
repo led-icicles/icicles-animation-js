@@ -1,7 +1,4 @@
-import { Animation } from "../src/animation";
-import { Color, Colors } from "../src/color";
-import { VisualFrame } from "../src/frames/visual_frame";
-import { Icicles } from "../src/icicles";
+import { Animation, Color, Colors, VisualFrame, Icicles } from "../src";
 
 const optimize = true;
 
@@ -15,7 +12,7 @@ const compile = async () => {
     versionNumber: 1,
     xCount: iciclesCount,
     yCount: ledsPerIcicle,
-    loopsCount: 1,
+    loopsCount: 2,
   });
 
   const explode = (color: Color) => {
@@ -32,8 +29,8 @@ const compile = async () => {
     animation.addFrame(whiteFrame);
 
     for (let index = 0; index < iciclesCount / 2; index++) {
-      icicles.setIcicleColor(9 - index, color.darken(index / 10));
-      icicles.setIcicleColor(10 + index, color.darken(index / 10));
+      icicles.setColumnColor(9 - index, color.darken(index / 10));
+      icicles.setColumnColor(10 + index, color.darken(index / 10));
     }
     const colorFrame = icicles.toFrame(40);
 
@@ -55,17 +52,6 @@ const compile = async () => {
     animation.addFrame(icicles.toFrame(500));
   };
 
-  explode(Colors.green);
-  explode(Colors.red);
-  explode(Colors.blue);
-  explode(Colors.orange);
-  explode(Colors.magenta);
-  explode(Colors.oceanBlue);
-  explode(Colors.yellow);
-  explode(Colors.lawnGreen);
-  explode(Colors.violet);
-
-  /// play 2 times
   explode(Colors.green);
   explode(Colors.red);
   explode(Colors.blue);

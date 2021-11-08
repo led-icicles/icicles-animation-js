@@ -1,14 +1,10 @@
-import { Animation } from "../src/animation";
-import { Color, Colors } from "../src/color";
-import { Icicles } from "../src/icicles";
-
-const optimize = false;
+import { Animation, Color, Colors, Icicles } from "../src";
 
 const compile = async () => {
   const xCount = 20;
   const yCount = 30;
   const icicles = new Icicles(xCount, yCount);
-  const anim = new Animation({ name: "Szum", optimize, xCount, yCount });
+  const anim = new Animation({ name: "Szum", optimize: true, xCount, yCount });
 
   const addNoiseFrame = (color: Color) => {
     const newPixels = icicles.pixels.map(() =>
@@ -31,7 +27,7 @@ const compile = async () => {
   addNoisePart(Colors.violet);
   addNoisePart(Colors.orange);
 
-  await anim.toFile(`./compiled/szum${optimize ? "-optimized" : ""}.anim`);
+  await anim.toFile(`./compiled/szum.anim`);
 };
 
 compile();

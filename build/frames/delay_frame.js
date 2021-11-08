@@ -23,4 +23,3 @@ export class DelayFrame extends Frame {
         return headerSize + durationSize;
     }
 }
-//# sourceMappingURL=delay_frame.js.map

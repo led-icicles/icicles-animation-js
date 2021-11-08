@@ -1,4 +1,4 @@
-import { Color } from "../color";
+import { Color } from "../utils/color";
 import { Frame, FrameType } from "./frame";
 export class VisualFrame extends Frame {
     constructor(pixels, duration) {
@@ -57,4 +57,3 @@ VisualFrame.linearBlend = (from, to, progress, duration) => {
     const pixels = from.pixels.map((color, index) => Color.linearBlend(color, to.pixels[index], progress));
     return new VisualFrame(pixels, duration !== null && duration !== void 0 ? duration : to.duration);
 };
-//# sourceMappingURL=visual_frame.js.map
