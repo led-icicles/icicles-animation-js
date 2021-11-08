@@ -127,6 +127,32 @@ export class Animation {
             this.optimize = (_b = options.optimize) !== null && _b !== void 0 ? _b : false;
         }
     }
+    get frames() {
+        return this._frames.slice(0);
+    }
+    get header() {
+        return this._header;
+    }
+    *play() {
+        let currentView = new VisualFrame(new Array(this.header.pixelsCount).fill(new Color(0, 0, 0)), 0);
+        for (const frame of this._frames) {
+            if (frame instanceof VisualFrame) {
+                currentView = frame;
+                yield frame;
+            }
+            else if (frame instanceof DelayFrame) {
+                currentView = currentView.copyWith({ duration: frame.duration });
+                yield currentView;
+            }
+            else if (frame instanceof AdditiveFrame) {
+                currentView = frame.mergeOnto(currentView);
+                yield currentView;
+            }
+            else {
+                throw new Error(`Unsupported frame type: "${frame.type}"`);
+            }
+        }
+    }
     /// Animation size in bytes
     get size() {
         let framesDataSize = 0;
@@ -194,7 +220,7 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                 break;
             }
             default:
-                throw new Error(`Unsupported frame type: ${frameType}`);
+                throw new Error(`Unsupported frame type: "${frameType}"`);
         }
     }
     console.log(`frames count: ${animation._frames.length}, size: ${(animation.size / 1000).toFixed(2)} KB`);

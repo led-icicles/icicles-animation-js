@@ -8,6 +8,7 @@ export class VisualFrame extends Frame {
         this.type = FrameType.VisualFrame;
         /// Copy visual frame instance
         this.copy = () => new VisualFrame(this.pixels.slice(0), this.duration);
+        this.copyWith = ({ duration, pixels, } = {}) => new VisualFrame(pixels !== null && pixels !== void 0 ? pixels : this.pixels.slice(0), duration !== null && duration !== void 0 ? duration : this.duration);
         this.darken = (progress, duration) => {
             const pixels = this.pixels.map((color) => color.darken(progress));
             return new VisualFrame(pixels, duration !== null && duration !== void 0 ? duration : this.duration);

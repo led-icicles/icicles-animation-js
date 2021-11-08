@@ -7,6 +7,10 @@ export declare class VisualFrame extends Frame {
     constructor(pixels: Array<Color>, duration: number);
     static assertVisualFramesCompatibility: (prevFrame: VisualFrame, nextFrame: VisualFrame) => void;
     copy: () => VisualFrame;
+    copyWith: ({ duration, pixels, }?: {
+        duration?: number | undefined;
+        pixels?: Color[] | undefined;
+    }) => VisualFrame;
     get size(): number;
     static linearBlend: (from: VisualFrame, to: VisualFrame, progress: number, duration?: number | undefined) => VisualFrame;
     darken: (progress: number, duration?: number | undefined) => VisualFrame;

@@ -1,12 +1,16 @@
 /// <reference types="node" />
-import { AnimationHeaderData } from "./animation/animation_header";
+import { AnimationHeader, AnimationHeaderData } from "./animation/animation_header";
 import { Frame } from "./frames/frame";
+import { VisualFrame } from "./frames/visual_frame";
 export declare type AnimationOptions = {
     optimize?: boolean;
 };
 export declare class Animation {
     private readonly _frames;
+    get frames(): Array<Frame>;
     private readonly _header;
+    get header(): AnimationHeader;
+    play(): Generator<VisualFrame, void, VisualFrame>;
     private currentView;
     readonly optimize: boolean;
     constructor(options: AnimationOptions & AnimationHeaderData);

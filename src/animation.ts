@@ -16,7 +16,35 @@ export type AnimationOptions = {
 
 export class Animation {
   private readonly _frames: Array<Frame> = [];
+  public get frames(): Array<Frame> {
+    return this._frames.slice(0);
+  }
   private readonly _header: AnimationHeader;
+  public get header(): AnimationHeader {
+    return this._header;
+  }
+
+  public *play(): Generator<VisualFrame, void, VisualFrame> {
+    let currentView: VisualFrame = new VisualFrame(
+      new Array(this.header.pixelsCount).fill(new Color(0, 0, 0)),
+      0
+    );
+
+    for (const frame of this._frames) {
+      if (frame instanceof VisualFrame) {
+        currentView = frame;
+        yield frame as VisualFrame;
+      } else if (frame instanceof DelayFrame) {
+        currentView = currentView.copyWith({ duration: frame.duration });
+        yield currentView;
+      } else if (frame instanceof AdditiveFrame) {
+        currentView = frame.mergeOnto(currentView);
+        yield currentView;
+      } else {
+        throw new Error(`Unsupported frame type: "${frame.type}"`);
+      }
+    }
+  }
 
   /// Current pixels view
   private currentView: VisualFrame;
@@ -237,7 +265,7 @@ export class Animation {
           break;
         }
         default:
-          throw new Error(`Unsupported frame type: ${frameType}`);
+          throw new Error(`Unsupported frame type: "${frameType}"`);
       }
     }
 

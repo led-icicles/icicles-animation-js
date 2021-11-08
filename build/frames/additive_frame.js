@@ -41,6 +41,14 @@ export class AdditiveFrame extends Frame {
             throw new Error("Provided more chnaged pixels than maximum allowed. Check [AdditiveFrame.maxChangedPixelIndex].");
         }
     }
+    mergeOnto(frame) {
+        const newFrame = frame.copyWith({ duration: this.duration });
+        for (let i = 0; i < this.changedPixels.length; i++) {
+            const changedPixel = this.changedPixels[i];
+            newFrame.pixels[changedPixel.index] = changedPixel.color;
+        }
+        return newFrame;
+    }
     // [(1 - uint8)type][(2 - uint16)duration][(2 - uint16)size][(x * 5)changedPixels]
     get size() {
         const typeSize = 1;

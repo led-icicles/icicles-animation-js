@@ -43,6 +43,17 @@ export class AdditiveFrame extends Frame {
     return changedPixels;
   };
 
+  public mergeOnto(frame: VisualFrame): VisualFrame {
+    const newFrame = frame.copyWith({ duration: this.duration });
+
+    for (let i = 0; i < this.changedPixels.length; i++) {
+      const changedPixel = this.changedPixels[i];
+      newFrame.pixels[changedPixel.index] = changedPixel.color;
+    }
+
+    return newFrame;
+  }
+
   static fromVisualFrames = (
     prevFrame: VisualFrame,
     nextFrame: VisualFrame

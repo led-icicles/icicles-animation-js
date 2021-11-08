@@ -8,6 +8,7 @@ export declare class AdditiveFrame extends Frame {
     static readonly maxChangedPixelIndex: number;
     constructor(changedPixels: Array<IndexedColor>, duration: number);
     static getChangedPixelsFromFrames: (prevFrame: VisualFrame, nextFrame: VisualFrame) => Array<IndexedColor>;
+    mergeOnto(frame: VisualFrame): VisualFrame;
     static fromVisualFrames: (prevFrame: VisualFrame, nextFrame: VisualFrame) => AdditiveFrame;
     get size(): number;
     toBytes: () => Uint8Array;

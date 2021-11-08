@@ -28,6 +28,14 @@ export class VisualFrame extends Frame {
 
   /// Copy visual frame instance
   public copy = () => new VisualFrame(this.pixels.slice(0), this.duration);
+  public copyWith = ({
+    duration,
+    pixels,
+  }: {
+    duration?: number;
+    pixels?: Array<Color>;
+  } = {}) =>
+    new VisualFrame(pixels ?? this.pixels.slice(0), duration ?? this.duration);
 
   /// [(1)type][(2)duration][(ledsCount*3)pixels]
   public get size(): number {
