@@ -4,7 +4,8 @@ export declare type ColorJson = {
     b: number;
 };
 export declare class Color {
-    private readonly value;
+    private readonly _value;
+    get value(): number;
     constructor(red: number, green: number, blue: number);
     get red(): number;
     get green(): number;

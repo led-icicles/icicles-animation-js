@@ -11,16 +11,19 @@ export class Color {
             this.blue === color.blue;
         this.toIndexedColor = (index) => new IndexedColor(index, this);
         this.darken = (progress) => Color.linearBlend(this, new Color(0, 0, 0), progress);
-        this.value = (red << 16) + (green << 8) + blue;
+        this._value = (red << 16) + (green << 8) + blue;
+    }
+    get value() {
+        return this._value;
     }
     get red() {
-        return (this.value & 0xff0000) >> 16;
+        return (this._value & 0xff0000) >> 16;
     }
     get green() {
-        return (this.value & 0x00ff00) >> 8;
+        return (this._value & 0x00ff00) >> 8;
     }
     get blue() {
-        return this.value & 0x0000ff;
+        return this._value & 0x0000ff;
     }
 }
 Color.linearBlend = (left, right, progress) => {
