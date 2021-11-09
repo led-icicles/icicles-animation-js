@@ -11,7 +11,7 @@ export declare class Animation {
     private readonly _header;
     get header(): AnimationHeader;
     play(): Generator<VisualFrame, void, VisualFrame>;
-    private currentView;
+    private _currentView;
     readonly optimize: boolean;
     constructor(options: AnimationOptions & AnimationHeaderData);
     addFrame: (newFrame: Frame) => void;

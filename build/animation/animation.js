@@ -45,7 +45,7 @@ export class Animation {
                     `required: ${this._header.ledsCount}`);
             }
             if (this.optimize) {
-                const changedPixels = AdditiveFrame.getChangedPixelsFromFrames(this.currentView, newFrame);
+                const changedPixels = AdditiveFrame.getChangedPixelsFromFrames(this._currentView, newFrame);
                 const noPixelsChanges = changedPixels.length === 0;
                 if (noPixelsChanges) {
                     /// TODO: We can then merge delay frames if possible.
@@ -66,7 +66,7 @@ export class Animation {
                 this._frames.push(newFrame);
             }
             /// set current view
-            this.currentView = newFrame;
+            this._currentView = newFrame;
         };
         this.toBytes = () => {
             if (this._frames.length === 0) {
@@ -95,6 +95,8 @@ export class Animation {
             const fs = require("fs");
             const p = require("path");
             const targetPath = p.resolve(path);
+            const targetDir = p.dirname(path);
+            yield fs.promises.mkdir(targetDir, { recursive: true });
             const stream = fs.createWriteStream(targetPath, { encoding: "binary" });
             try {
                 console.log("===== HEADER =====");
@@ -137,7 +139,7 @@ export class Animation {
         /// Before each animation leds are set to black color.
         /// But black color is not displayed. To set all pixels to black,
         /// you should add frame, even [DelayFrame]
-        this.currentView = new VisualFrame(new Array(this._header.ledsCount).fill(new Color(0, 0, 0)), 
+        this._currentView = new VisualFrame(new Array(this._header.ledsCount).fill(new Color(0, 0, 0)), 
         /// zero duration - this is just a placeholder
         0);
         if (options) {
