@@ -1,5 +1,6 @@
 import { Color } from "../utils/color";
 import { VisualFrame } from "../frames/visual_frame";
+import { Duration } from "..";
 
 export class Icicles {
   public readonly pixels: Array<Color>;
@@ -74,8 +75,8 @@ export class Icicles {
     this.pixels.push(...pixels);
   };
 
-  public toFrame = (duration: number): VisualFrame => {
+  public toFrame = (duration: Duration): VisualFrame => {
     const copiedPixels = this.pixels.slice(0);
-    return new VisualFrame(copiedPixels, duration);
+    return new VisualFrame(copiedPixels, duration.milliseconds);
   };
 }

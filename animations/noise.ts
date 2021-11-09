@@ -1,4 +1,4 @@
-import { Animation, Color, Colors, Icicles } from "../src";
+import { Animation, Color, Colors, Duration, Icicles } from "../src";
 
 const compile = async () => {
   const xCount = 20;
@@ -11,7 +11,7 @@ const compile = async () => {
       Math.random() > 0.5 ? Colors.black : color
     );
     icicles.setPixels(newPixels);
-    anim.addFrame(icicles.toFrame(50));
+    anim.addFrame(icicles.toFrame(new Duration({ milliseconds: 50 })));
   };
 
   const addNoisePart = (color: Color) => {

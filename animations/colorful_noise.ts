@@ -1,4 +1,11 @@
-import { Animation, Color, Colors, Icicles, IndexedColor } from "../src";
+import {
+  Animation,
+  Color,
+  Colors,
+  Duration,
+  Icicles,
+  IndexedColor,
+} from "../src";
 
 const compile = async () => {
   const iciclesCount = 20;
@@ -28,10 +35,10 @@ const compile = async () => {
       const randomPixelIndex = getRandomPixelIndex();
       const [removedPixel] = indexedPixels.splice(randomPixelIndex, 1);
       icicles.setPixelColorAtIndex(removedPixel.index, color);
-      anim.addFrame(icicles.toFrame(16));
+      anim.addFrame(icicles.toFrame(new Duration({ milliseconds: 16 })));
     }
-    /// wait for second before next cycle
-    anim.addFrame(icicles.toFrame(500));
+    /// wait for 500ms before next cycle
+    anim.addFrame(icicles.toFrame(new Duration({ milliseconds: 500 })));
   };
 
   generateNoiseWithColor(Colors.white);

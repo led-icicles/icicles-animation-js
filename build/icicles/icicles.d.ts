@@ -1,5 +1,6 @@
 import { Color } from "../utils/color";
 import { VisualFrame } from "../frames/visual_frame";
+import { Duration } from "..";
 export declare class Icicles {
     readonly xCount: number;
     readonly yCount: number;
@@ -15,5 +16,5 @@ export declare class Icicles {
     setPixelColorAtIndex: (index: number, color: Color) => void;
     setAllPixelsColor: (color: Color) => void;
     setPixels: (pixels: Array<Color>) => void;
-    toFrame: (duration: number) => VisualFrame;
+    toFrame: (duration: Duration) => VisualFrame;
 }

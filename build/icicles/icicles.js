@@ -52,7 +52,7 @@ class Icicles {
         };
         this.toFrame = (duration) => {
             const copiedPixels = this.pixels.slice(0);
-            return new visual_frame_1.VisualFrame(copiedPixels, duration);
+            return new visual_frame_1.VisualFrame(copiedPixels, duration.milliseconds);
         };
         this.pixels = new Array(xCount * yCount).fill(new color_1.Color(0, 0, 0));
     }

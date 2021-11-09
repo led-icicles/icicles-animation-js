@@ -1,4 +1,11 @@
-import { Animation, Color, Colors, VisualFrame, Icicles } from "../src";
+import {
+  Animation,
+  Color,
+  Colors,
+  VisualFrame,
+  Icicles,
+  Duration,
+} from "../src";
 
 const optimize = true;
 
@@ -21,18 +28,18 @@ const compile = async () => {
       icicles.setPixelColor(i, 6, color);
       icicles.setPixelColor(19 - i, 6, color);
 
-      animation.addFrame(icicles.toFrame(30));
+      animation.addFrame(icicles.toFrame(new Duration({ milliseconds: 30 })));
     }
 
     icicles.setAllPixelsColor(Colors.white);
-    const whiteFrame = icicles.toFrame(150);
+    const whiteFrame = icicles.toFrame(new Duration({ milliseconds: 150 }));
     animation.addFrame(whiteFrame);
 
     for (let index = 0; index < iciclesCount / 2; index++) {
       icicles.setColumnColor(9 - index, color.darken(index / 10));
       icicles.setColumnColor(10 + index, color.darken(index / 10));
     }
-    const colorFrame = icicles.toFrame(40);
+    const colorFrame = icicles.toFrame(new Duration({ milliseconds: 40 }));
 
     let blend = 0;
     while (blend < 1) {
@@ -49,7 +56,7 @@ const compile = async () => {
     }
 
     icicles.setAllPixelsColor(Colors.black);
-    animation.addFrame(icicles.toFrame(500));
+    animation.addFrame(icicles.toFrame(new Duration({ milliseconds: 500 })));
   };
 
   explode(Colors.green);
