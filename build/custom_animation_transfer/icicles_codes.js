@@ -1,4 +1,7 @@
-export var IciclesCodes;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IciclesCodes = void 0;
+var IciclesCodes;
 (function (IciclesCodes) {
     // CLIENT_ACTIONS
     IciclesCodes[IciclesCodes["nextAnimation"] = 1] = "nextAnimation";
@@ -17,4 +20,4 @@ export var IciclesCodes;
     // if not custom animation will be removed till restart
     IciclesCodes[IciclesCodes["deleteAnimation"] = 200] = "deleteAnimation";
     IciclesCodes[IciclesCodes["restartESP"] = 255] = "restartESP";
-})(IciclesCodes || (IciclesCodes = {}));
+})(IciclesCodes = exports.IciclesCodes || (exports.IciclesCodes = {}));

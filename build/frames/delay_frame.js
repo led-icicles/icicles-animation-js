@@ -1,9 +1,12 @@
-import { Frame, FrameType } from "./frame";
-export class DelayFrame extends Frame {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DelayFrame = void 0;
+const frame_1 = require("./frame");
+class DelayFrame extends frame_1.Frame {
     constructor(duration) {
         super(duration);
         this.duration = duration;
-        this.type = FrameType.DelayFrame;
+        this.type = frame_1.FrameType.DelayFrame;
         this.toBytes = () => {
             const size = this.size;
             let dataPointer = 0;
@@ -23,3 +26,4 @@ export class DelayFrame extends Frame {
         return headerSize + durationSize;
     }
 }
+exports.DelayFrame = DelayFrame;

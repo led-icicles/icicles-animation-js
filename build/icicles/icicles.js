@@ -1,6 +1,9 @@
-import { Color } from "../utils/color";
-import { VisualFrame } from "../frames/visual_frame";
-export class Icicles {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Icicles = void 0;
+const color_1 = require("../utils/color");
+const visual_frame_1 = require("../frames/visual_frame");
+class Icicles {
     constructor(xCount, yCount) {
         this.xCount = xCount;
         this.yCount = yCount;
@@ -49,9 +52,9 @@ export class Icicles {
         };
         this.toFrame = (duration) => {
             const copiedPixels = this.pixels.slice(0);
-            return new VisualFrame(copiedPixels, duration);
+            return new visual_frame_1.VisualFrame(copiedPixels, duration);
         };
-        this.pixels = new Array(xCount * yCount).fill(new Color(0, 0, 0));
+        this.pixels = new Array(xCount * yCount).fill(new color_1.Color(0, 0, 0));
     }
     _isValidIndex(index) {
         if (index >= this.pixels.length || index < 0) {
@@ -59,3 +62,4 @@ export class Icicles {
         }
     }
 }
+exports.Icicles = Icicles;

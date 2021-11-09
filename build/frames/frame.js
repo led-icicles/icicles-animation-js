@@ -1,4 +1,7 @@
-export var FrameType;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Frame = exports.FrameType = void 0;
+var FrameType;
 (function (FrameType) {
     /// [(1)type][(2)duration]
     FrameType[FrameType["DelayFrame"] = 1] = "DelayFrame";
@@ -10,8 +13,8 @@ export var FrameType;
     /// [(2 - uint16)pixel_index][(1 -uint8)red][(1 -uint8)green][(1 -uint8)blue]
     /// Therefore it is possible to index `65535` pixels (leds)
     FrameType[FrameType["AdditiveFrame"] = 3] = "AdditiveFrame";
-})(FrameType || (FrameType = {}));
-export class Frame {
+})(FrameType = exports.FrameType || (exports.FrameType = {}));
+class Frame {
     constructor(duration) {
         this.duration = duration;
         if (typeof duration !== "number" || duration > Frame.maxDuration) {
@@ -19,4 +22,5 @@ export class Frame {
         }
     }
 }
+exports.Frame = Frame;
 Frame.maxDuration = 65535;

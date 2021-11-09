@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.clamp = void 0;
 /**
  * Returns a number whose value is limited to the given range.
  *
@@ -10,6 +13,7 @@
  * @returns A number in the range [min, max]
  * @type Number
  */
-export const clamp = (val, { min, max }) => {
+const clamp = (val, { min, max }) => {
     return Math.min(Math.max(val, min), max);
 };
+exports.clamp = clamp;

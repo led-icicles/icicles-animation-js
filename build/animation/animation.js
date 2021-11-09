@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,14 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var _a;
-import { AnimationHeader } from "./animation_header";
-import { Color, IndexedColor } from "../utils/color";
-import { FrameType } from "../frames/frame";
-import { UINT_16_SIZE_IN_BYTES } from "../utils/sizes";
-import { DelayFrame } from "../frames/delay_frame";
-import { VisualFrame } from "../frames/visual_frame";
-import { AdditiveFrame } from "../frames/additive_frame";
-export class Animation {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Animation = void 0;
+const animation_header_1 = require("./animation_header");
+const color_1 = require("../utils/color");
+const frame_1 = require("../frames/frame");
+const sizes_1 = require("../utils/sizes");
+const delay_frame_1 = require("../frames/delay_frame");
+const visual_frame_1 = require("../frames/visual_frame");
+const additive_frame_1 = require("../frames/additive_frame");
+class Animation {
     constructor(options) {
         var _b;
         this._frames = [];
@@ -28,15 +31,15 @@ export class Animation {
                 throw new Error("The animation can't run faster than 60 FPS (preferred: 30 FPS). " +
                     "Therefore, the inter-frame delay cannot be less than 16ms.");
             }
-            else if (newFrame instanceof DelayFrame) {
+            else if (newFrame instanceof delay_frame_1.DelayFrame) {
                 this._frames.push(newFrame);
                 return;
             }
-            else if (newFrame instanceof AdditiveFrame) {
+            else if (newFrame instanceof additive_frame_1.AdditiveFrame) {
                 this._frames.push(newFrame);
                 return;
             }
-            else if (!(newFrame instanceof VisualFrame)) {
+            else if (!(newFrame instanceof visual_frame_1.VisualFrame)) {
                 throw new Error("Unsupported frame type.");
             }
             else if (newFrame.pixels.length !== this._header.ledsCount) {
@@ -45,14 +48,14 @@ export class Animation {
                     `required: ${this._header.ledsCount}`);
             }
             if (this.optimize) {
-                const changedPixels = AdditiveFrame.getChangedPixelsFromFrames(this._currentView, newFrame);
+                const changedPixels = additive_frame_1.AdditiveFrame.getChangedPixelsFromFrames(this._currentView, newFrame);
                 const noPixelsChanges = changedPixels.length === 0;
                 if (noPixelsChanges) {
                     /// TODO: We can then merge delay frames if possible.
-                    this._frames.push(new DelayFrame(newFrame.duration));
+                    this._frames.push(new delay_frame_1.DelayFrame(newFrame.duration));
                 }
                 else {
-                    const additiveFrame = new AdditiveFrame(changedPixels, newFrame.duration);
+                    const additiveFrame = new additive_frame_1.AdditiveFrame(changedPixels, newFrame.duration);
                     const isAdditiveFrameSmaller = additiveFrame.size < newFrame.size;
                     if (isAdditiveFrameSmaller) {
                         this._frames.push(additiveFrame);
@@ -129,7 +132,7 @@ export class Animation {
                 throw err;
             }
         });
-        this._header = new AnimationHeader({
+        this._header = new animation_header_1.AnimationHeader({
             name: options.name,
             xCount: options.xCount,
             yCount: options.yCount,
@@ -139,7 +142,7 @@ export class Animation {
         /// Before each animation leds are set to black color.
         /// But black color is not displayed. To set all pixels to black,
         /// you should add frame, even [DelayFrame]
-        this._currentView = new VisualFrame(new Array(this._header.ledsCount).fill(new Color(0, 0, 0)), 
+        this._currentView = new visual_frame_1.VisualFrame(new Array(this._header.ledsCount).fill(new color_1.Color(0, 0, 0)), 
         /// zero duration - this is just a placeholder
         0);
         if (options) {
@@ -155,17 +158,17 @@ export class Animation {
     *play() {
         let loop = 0;
         while (loop++ < this.header.loopsCount) {
-            let currentView = VisualFrame.filled(this.header.pixelsCount, new Color(0, 0, 0), 0);
+            let currentView = visual_frame_1.VisualFrame.filled(this.header.pixelsCount, new color_1.Color(0, 0, 0), 0);
             for (const frame of this._frames) {
-                if (frame instanceof VisualFrame) {
+                if (frame instanceof visual_frame_1.VisualFrame) {
                     currentView = frame;
                     yield frame;
                 }
-                else if (frame instanceof DelayFrame) {
+                else if (frame instanceof delay_frame_1.DelayFrame) {
                     currentView = currentView.copyWith({ duration: frame.duration });
                     yield currentView;
                 }
-                else if (frame instanceof AdditiveFrame) {
+                else if (frame instanceof additive_frame_1.AdditiveFrame) {
                     currentView = frame.mergeOnto(currentView);
                     yield currentView;
                 }
@@ -193,6 +196,7 @@ export class Animation {
         return this._header.size + framesDataSize;
     }
 }
+exports.Animation = Animation;
 _a = Animation;
 Animation.fromFile = (path) => __awaiter(void 0, void 0, void 0, function* () {
     const isBrowser = typeof window !== "undefined";
@@ -204,7 +208,7 @@ Animation.fromFile = (path) => __awaiter(void 0, void 0, void 0, function* () {
     return Animation.decode(buffer);
 });
 Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
-    const { header, data } = AnimationHeader.decode(buffer);
+    const { header, data } = animation_header_1.AnimationHeader.decode(buffer);
     const animation = new Animation(Object.assign(Object.assign({}, header), { optimize: false }));
     const pixelsCount = header.pixelsCount;
     let offset = 0;
@@ -212,39 +216,39 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
     while (offset < data.length) {
         const frameType = dataView.getUint8(offset++);
         switch (frameType) {
-            case FrameType.VisualFrame: {
+            case frame_1.FrameType.VisualFrame: {
                 const duration = dataView.getUint16(offset, true);
-                offset += UINT_16_SIZE_IN_BYTES;
+                offset += sizes_1.UINT_16_SIZE_IN_BYTES;
                 const endIndex = offset + pixelsCount * 3;
                 const pixels = [];
                 for (let i = offset; i < endIndex; i += 3) {
-                    const color = new Color(data[i], data[i + 1], data[i + 2]);
+                    const color = new color_1.Color(data[i], data[i + 1], data[i + 2]);
                     pixels.push(color);
                 }
                 offset = endIndex;
-                animation.addFrame(new VisualFrame(pixels, duration));
+                animation.addFrame(new visual_frame_1.VisualFrame(pixels, duration));
                 break;
             }
-            case FrameType.DelayFrame: {
+            case frame_1.FrameType.DelayFrame: {
                 const duration = dataView.getUint16(offset, true);
-                offset += UINT_16_SIZE_IN_BYTES;
-                animation.addFrame(new DelayFrame(duration));
+                offset += sizes_1.UINT_16_SIZE_IN_BYTES;
+                animation.addFrame(new delay_frame_1.DelayFrame(duration));
                 break;
             }
-            case FrameType.AdditiveFrame: {
+            case frame_1.FrameType.AdditiveFrame: {
                 const duration = dataView.getUint16(offset, true);
-                offset += UINT_16_SIZE_IN_BYTES;
+                offset += sizes_1.UINT_16_SIZE_IN_BYTES;
                 const changedPixelsCount = dataView.getUint16(offset, true);
-                offset += UINT_16_SIZE_IN_BYTES;
+                offset += sizes_1.UINT_16_SIZE_IN_BYTES;
                 const endIndex = offset + changedPixelsCount * 5;
                 const pixels = [];
                 for (let i = offset; i < endIndex; i += 5) {
                     const pixelIndex = dataView.getUint16(i, true);
-                    const indexedColor = new IndexedColor(pixelIndex, new Color(data[i + UINT_16_SIZE_IN_BYTES], data[i + UINT_16_SIZE_IN_BYTES + 1], data[i + UINT_16_SIZE_IN_BYTES + 2]));
+                    const indexedColor = new color_1.IndexedColor(pixelIndex, new color_1.Color(data[i + sizes_1.UINT_16_SIZE_IN_BYTES], data[i + sizes_1.UINT_16_SIZE_IN_BYTES + 1], data[i + sizes_1.UINT_16_SIZE_IN_BYTES + 2]));
                     pixels.push(indexedColor);
                 }
                 offset = endIndex;
-                animation.addFrame(new AdditiveFrame(pixels, duration));
+                animation.addFrame(new additive_frame_1.AdditiveFrame(pixels, duration));
                 break;
             }
             default:

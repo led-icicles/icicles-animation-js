@@ -1,4 +1,7 @@
-export class Color {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Colors = exports.IndexedColor = exports.Color = void 0;
+class Color {
     constructor(red, green, blue) {
         this.toJson = () => ({
             r: this.red,
@@ -26,6 +29,7 @@ export class Color {
         return this._value & 0x0000ff;
     }
 }
+exports.Color = Color;
 Color.linearBlend = (left, right, progress) => {
     const MIN_PROGRESS = 0.0;
     const MAX_PROGRESS = 1.0;
@@ -36,18 +40,20 @@ Color.linearBlend = (left, right, progress) => {
             : progress;
     return new Color(left.red + (right.red - left.red) * clampedProgress, left.green + (right.green - left.green) * clampedProgress, left.blue + (right.blue - left.blue) * clampedProgress);
 };
-export class IndexedColor {
+class IndexedColor {
     constructor(index, color) {
         this.index = index;
         this.color = color;
     }
 }
+exports.IndexedColor = IndexedColor;
 /// Contains predefined colors that are used on icicles controler.
-export class Colors {
+class Colors {
     constructor() {
         this.getRandomColor = () => Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
     }
 }
+exports.Colors = Colors;
 Colors.green = new Color(0, 255, 0);
 Colors.red = new Color(255, 0, 0);
 Colors.blue = new Color(0, 0, 255);

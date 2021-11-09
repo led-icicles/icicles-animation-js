@@ -1,11 +1,14 @@
-import { Color } from "../utils/color";
-import { Frame, FrameType } from "./frame";
-export class VisualFrame extends Frame {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VisualFrame = void 0;
+const color_1 = require("../utils/color");
+const frame_1 = require("./frame");
+class VisualFrame extends frame_1.Frame {
     constructor(pixels, duration) {
         super(duration);
         this.pixels = pixels;
         this.duration = duration;
-        this.type = FrameType.VisualFrame;
+        this.type = frame_1.FrameType.VisualFrame;
         /// Copy visual frame instance
         this.copy = () => new VisualFrame(this.pixels.slice(0), this.duration);
         this.copyWith = ({ duration, pixels, } = {}) => new VisualFrame(pixels !== null && pixels !== void 0 ? pixels : this.pixels.slice(0), duration !== null && duration !== void 0 ? duration : this.duration);
@@ -42,6 +45,7 @@ export class VisualFrame extends Frame {
         return typeSize + durationSize + colorsSize;
     }
 }
+exports.VisualFrame = VisualFrame;
 /// Verify wether two visual frames are compatibility
 VisualFrame.assertVisualFramesCompatibility = (prevFrame, nextFrame) => {
     if (!(prevFrame instanceof VisualFrame) ||
@@ -54,6 +58,6 @@ VisualFrame.assertVisualFramesCompatibility = (prevFrame, nextFrame) => {
 };
 VisualFrame.linearBlend = (from, to, progress, duration) => {
     VisualFrame.assertVisualFramesCompatibility(from, to);
-    const pixels = from.pixels.map((color, index) => Color.linearBlend(color, to.pixels[index], progress));
+    const pixels = from.pixels.map((color, index) => color_1.Color.linearBlend(color, to.pixels[index], progress));
     return new VisualFrame(pixels, duration !== null && duration !== void 0 ? duration : to.duration);
 };

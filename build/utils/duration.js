@@ -1,4 +1,7 @@
-export class Duration {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Duration = void 0;
+class Duration {
     constructor({ days = 0, hours = 0, minutes = 0, seconds = 0, milliseconds = 0, }) {
         this._milliseconds =
             Duration.millisecondsPerDay * days +
@@ -23,6 +26,7 @@ export class Duration {
         return Math.trunc(this._milliseconds);
     }
 }
+exports.Duration = Duration;
 Duration.millisecondsPerSecond = 1000;
 Duration.secondsPerMinute = 60;
 Duration.minutesPerHour = 60;

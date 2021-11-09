@@ -6,6 +6,7 @@
     "esModuleInterop": true,
     "target": "ES6",
     "lib": ["DOM", "es2021"],
+    "module": "CommonJS",
     "rootDir": "src",
     "sourceMap": false,
     "declaration": true,

@@ -1,12 +1,15 @@
-import { UINT_16_MAX_SIZE } from "../utils/sizes";
-import { Frame, FrameType } from "./frame";
-import { VisualFrame } from "./visual_frame";
-export class AdditiveFrame extends Frame {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AdditiveFrame = void 0;
+const sizes_1 = require("../utils/sizes");
+const frame_1 = require("./frame");
+const visual_frame_1 = require("./visual_frame");
+class AdditiveFrame extends frame_1.Frame {
     constructor(changedPixels, duration) {
         super(duration);
         this.changedPixels = changedPixels;
         this.duration = duration;
-        this.type = FrameType.AdditiveFrame;
+        this.type = frame_1.FrameType.AdditiveFrame;
         this.toBytes = () => {
             const size = this.size;
             let dataPointer = 0;
@@ -59,9 +62,10 @@ export class AdditiveFrame extends Frame {
         return typeSize + durationSize + sizeFieldSize + changedPixelsSize;
     }
 }
-AdditiveFrame.maxChangedPixelIndex = UINT_16_MAX_SIZE;
+exports.AdditiveFrame = AdditiveFrame;
+AdditiveFrame.maxChangedPixelIndex = sizes_1.UINT_16_MAX_SIZE;
 AdditiveFrame.getChangedPixelsFromFrames = (prevFrame, nextFrame) => {
-    VisualFrame.assertVisualFramesCompatibility(prevFrame, nextFrame);
+    visual_frame_1.VisualFrame.assertVisualFramesCompatibility(prevFrame, nextFrame);
     const changedPixels = [];
     for (let index = 0; index < prevFrame.pixels.length; index++) {
         const prevPixel = prevFrame.pixels[index];
