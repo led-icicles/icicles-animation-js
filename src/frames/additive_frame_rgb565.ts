@@ -1,4 +1,5 @@
-import { AdditiveFrame, FrameType } from ".";
+import { AdditiveFrame } from "./additive_frame";
+import { FrameType } from "./frame";
 
 export class AdditiveFrameRgb565 extends AdditiveFrame {
   public readonly type: FrameType = FrameType.AdditiveFrameRgb565;

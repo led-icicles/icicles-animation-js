@@ -1,4 +1,5 @@
-import { FrameType, VisualFrame } from ".";
+import { FrameType } from "./frame";
+import { VisualFrame } from "./visual_frame";
 
 export class VisualFrameRgb565 extends VisualFrame {
   public readonly type: FrameType = FrameType.VisualFrameRgb565;

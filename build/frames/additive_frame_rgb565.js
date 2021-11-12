@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdditiveFrameRgb565 = void 0;
-const _1 = require(".");
-class AdditiveFrameRgb565 extends _1.AdditiveFrame {
+const additive_frame_1 = require("./additive_frame");
+const frame_1 = require("./frame");
+class AdditiveFrameRgb565 extends additive_frame_1.AdditiveFrame {
     constructor() {
         super(...arguments);
-        this.type = _1.FrameType.AdditiveFrameRgb565;
+        this.type = frame_1.FrameType.AdditiveFrameRgb565;
         this.toBytes = () => {
             const size = this.size;
             let dataPointer = 0;

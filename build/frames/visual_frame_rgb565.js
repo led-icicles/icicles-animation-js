@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VisualFrameRgb565 = void 0;
-const _1 = require(".");
-class VisualFrameRgb565 extends _1.VisualFrame {
+const frame_1 = require("./frame");
+const visual_frame_1 = require("./visual_frame");
+class VisualFrameRgb565 extends visual_frame_1.VisualFrame {
     constructor() {
         super(...arguments);
-        this.type = _1.FrameType.VisualFrameRgb565;
+        this.type = frame_1.FrameType.VisualFrameRgb565;
         this.toBytes = () => {
             const size = this.size;
             let dataPointer = 0;
