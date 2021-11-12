@@ -21,7 +21,7 @@ class VisualFrame extends frame_1.Frame {
             let dataPointer = 0;
             const data = new Uint8Array(size);
             /// frame header
-            data[dataPointer++] = rgb565 ? frame_1.FrameType.AdditiveFrameRgb565 : this.type;
+            data[dataPointer++] = rgb565 ? frame_1.FrameType.VisualFrameRgb565 : this.type;
             /// frame duration (little endian)
             data[dataPointer++] = this.duration & 255;
             data[dataPointer++] = this.duration >>> 8;
