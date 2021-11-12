@@ -280,6 +280,7 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                 offset += sizes_1.UINT_16_SIZE_IN_BYTES;
                 const endIndex = offset + changedPixelsCount * 4;
                 const pixels = new Array(changedPixelsCount);
+                console.log("changedPixelsCount", changedPixelsCount);
                 for (let i = offset; i < endIndex; i += 4) {
                     const pixelIndex = dataView.getUint16(i, true);
                     const colorData = dataView.getUint16(i + sizes_1.UINT_16_SIZE_IN_BYTES, true);
@@ -294,6 +295,7 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                     pixels[i / 4] = indexedColor;
                 }
                 offset = endIndex;
+                console.log("pixels", pixels.length);
                 animation.addFrame(new additive_frame_1.AdditiveFrame(pixels, duration));
                 break;
             }
