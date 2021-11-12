@@ -1,4 +1,5 @@
 import { IndexedColor } from "../utils/color";
+import { AdditiveFrameRgb565 } from "./additive_frame_rgb565";
 import { Frame, FrameType } from "./frame";
 import { VisualFrame } from "./visual_frame";
 export declare class AdditiveFrame extends Frame {
@@ -11,8 +12,6 @@ export declare class AdditiveFrame extends Frame {
     mergeOnto(frame: VisualFrame): VisualFrame;
     static fromVisualFrames: (prevFrame: VisualFrame, nextFrame: VisualFrame) => AdditiveFrame;
     get size(): number;
-    get size565(): number;
-    toBytes: ({ rgb565, }?: {
-        rgb565?: boolean | undefined;
-    }) => Uint8Array;
+    toRgb565(): AdditiveFrameRgb565;
+    toBytes: () => Uint8Array;
 }

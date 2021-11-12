@@ -8,6 +8,8 @@ import { AdditiveFrame } from "../frames/additive_frame";
 
 import type * as fsTypes from "fs";
 import type * as pathTypes from "path";
+import { AdditiveFrameRgb565 } from "../frames/additive_frame_rgb565";
+import { VisualFrameRgb565 } from "../frames/visual_frame_rgb565";
 
 export type AnimationOptions = {
   optimize?: boolean;
@@ -212,7 +214,7 @@ export class Animation {
       for (const frame of this._frames) {
         const frameBytes =
           frame instanceof VisualFrame || frame instanceof AdditiveFrame
-            ? frame.toBytes({ rgb565: this.useRgb565 })
+            ? frame.toRgb565().toBytes()
             : frame.toBytes();
 
         await new Promise<void>((res, rej) =>
@@ -305,7 +307,7 @@ export class Animation {
           }
           offset = endIndex;
 
-          animation.addFrame(new VisualFrame(pixels, duration));
+          animation.addFrame(new VisualFrameRgb565(pixels, duration));
           break;
         }
         case FrameType.DelayFrame: {
@@ -374,7 +376,7 @@ export class Animation {
           }
           offset = endIndex;
 
-          animation.addFrame(new AdditiveFrame(pixels, duration));
+          animation.addFrame(new AdditiveFrameRgb565(pixels, duration));
           break;
         }
         default:

@@ -20,10 +20,11 @@ const compile = async () => {
     xCount: iciclesCount,
     yCount: ledsPerIcicle,
     loopsCount: 2,
+    useRgb565: true,
   });
 
   const explode = (color: Color) => {
-    const centerIndex = Math.round (ledsPerIcicle / 2)
+    const centerIndex = Math.round(ledsPerIcicle / 2);
     for (let i = 0; i < iciclesCount / 2; i++) {
       icicles.setAllPixelsColor(Colors.black);
       icicles.setPixelColor(i, centerIndex, color);
@@ -71,11 +72,7 @@ const compile = async () => {
   explode(Colors.violet);
 
   await animation.toFile(
-    `./eksplozja-kulek${optimize ? "-optimized" : ""}.anim`
-  );
-
-  await Animation.fromFile(
-    `./eksplozja-kulek${optimize ? "-optimized" : ""}.anim`
+    `compiled/eksplozja-kulek${optimize ? "-optimized-rgb565" : ""}.anim`
   );
 };
 

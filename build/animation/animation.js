@@ -18,6 +18,8 @@ const sizes_1 = require("../utils/sizes");
 const delay_frame_1 = require("../frames/delay_frame");
 const visual_frame_1 = require("../frames/visual_frame");
 const additive_frame_1 = require("../frames/additive_frame");
+const additive_frame_rgb565_1 = require("../frames/additive_frame_rgb565");
+const visual_frame_rgb565_1 = require("../frames/visual_frame_rgb565");
 class Animation {
     constructor(options) {
         var _b, _c;
@@ -116,7 +118,7 @@ class Animation {
                 let framesToFileStart = Date.now();
                 for (const frame of this._frames) {
                     const frameBytes = frame instanceof visual_frame_1.VisualFrame || frame instanceof additive_frame_1.AdditiveFrame
-                        ? frame.toBytes({ rgb565: this.useRgb565 })
+                        ? frame.toRgb565().toBytes()
                         : frame.toBytes();
                     yield new Promise((res, rej) => stream.write(frameBytes, (err) => {
                         if (err)
@@ -249,7 +251,7 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                     pixels[arrayIndex++] = color;
                 }
                 offset = endIndex;
-                animation.addFrame(new visual_frame_1.VisualFrame(pixels, duration));
+                animation.addFrame(new visual_frame_rgb565_1.VisualFrameRgb565(pixels, duration));
                 break;
             }
             case frame_1.FrameType.DelayFrame: {
@@ -296,7 +298,7 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                     pixels[arrayIndex++] = indexedColor;
                 }
                 offset = endIndex;
-                animation.addFrame(new additive_frame_1.AdditiveFrame(pixels, duration));
+                animation.addFrame(new additive_frame_rgb565_1.AdditiveFrameRgb565(pixels, duration));
                 break;
             }
             default:

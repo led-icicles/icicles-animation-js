@@ -1,5 +1,6 @@
 import { Color } from "../utils/color";
 import { Frame, FrameType } from "./frame";
+import { VisualFrameRgb565 } from "./visual_frame_rgb565";
 export declare class VisualFrame extends Frame {
     readonly pixels: Array<Color>;
     readonly duration: number;
@@ -13,10 +14,8 @@ export declare class VisualFrame extends Frame {
         pixels?: Color[] | undefined;
     }) => VisualFrame;
     get size(): number;
-    get size565(): number;
     static linearBlend: (from: VisualFrame, to: VisualFrame, progress: number, duration?: number | undefined) => VisualFrame;
     darken: (progress: number, duration?: number | undefined) => VisualFrame;
-    toBytes: ({ rgb565, }?: {
-        rgb565?: boolean | undefined;
-    }) => Uint8Array;
+    toRgb565(): VisualFrameRgb565;
+    toBytes: () => Uint8Array;
 }

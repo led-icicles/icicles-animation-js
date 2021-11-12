@@ -1,5 +1,6 @@
 import { IndexedColor } from "../utils/color";
 import { UINT_16_MAX_SIZE } from "../utils/sizes";
+import { AdditiveFrameRgb565 } from "./additive_frame_rgb565";
 import { Frame, FrameType } from "./frame";
 import { VisualFrame } from "./visual_frame";
 
@@ -76,25 +77,18 @@ export class AdditiveFrame extends Frame {
     return typeSize + durationSize + sizeFieldSize + changedPixelsSize;
   }
 
-  // [(1 - uint8)type][(2 - uint16)duration][(2 - uint16)size][(x * 5)changedPixels]
-  get size565(): number {
-    const typeSize = 1;
-    const durationSize = 2;
-    const sizeFieldSize = 2;
-    const changedPixelsSize = this.changedPixels.length * 4;
-    return typeSize + durationSize + sizeFieldSize + changedPixelsSize;
+  public toRgb565(): AdditiveFrameRgb565 {
+    return new AdditiveFrameRgb565(this.changedPixels.slice(0), this.duration);
   }
 
-  public toBytes = ({
-    rgb565 = false,
-  }: { rgb565?: boolean } = {}): Uint8Array => {
-    const size = rgb565 ? this.size565 : this.size;
+  public toBytes = (): Uint8Array => {
+    const size = this.size;
 
     let dataPointer: number = 0;
 
     const data = new Uint8Array(size);
     /// frame header
-    data[dataPointer++] = rgb565 ? FrameType.AdditiveFrameRgb565 : this.type;
+    data[dataPointer++] = this.type;
     /// frame duration (little endian)
     data[dataPointer++] = this.duration & 255;
     data[dataPointer++] = this.duration >>> 8;
@@ -113,16 +107,9 @@ export class AdditiveFrame extends Frame {
 
       const color = changedPixel.color;
 
-      if (rgb565) {
-        const color565 = color.toRgb565();
-        /// color 565 (little endian)
-        data[dataPointer++] = color565 & 255;
-        data[dataPointer++] = color565 >>> 8;
-      } else {
-        data[dataPointer++] = color.red;
-        data[dataPointer++] = color.green;
-        data[dataPointer++] = color.blue;
-      }
+      data[dataPointer++] = color.red;
+      data[dataPointer++] = color.green;
+      data[dataPointer++] = color.blue;
     }
 
     return data;
