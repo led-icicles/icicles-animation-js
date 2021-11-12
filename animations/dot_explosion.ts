@@ -11,7 +11,7 @@ const optimize = true;
 
 const compile = async () => {
   const iciclesCount = 20;
-  const ledsPerIcicle = 15;
+  const ledsPerIcicle = 30;
   const icicles = new Icicles(iciclesCount, ledsPerIcicle);
   const animation = new Animation({
     name: "Eksplozja kulek",
@@ -23,10 +23,11 @@ const compile = async () => {
   });
 
   const explode = (color: Color) => {
+    const centerIndex = Math.round (ledsPerIcicle / 2)
     for (let i = 0; i < iciclesCount / 2; i++) {
       icicles.setAllPixelsColor(Colors.black);
-      icicles.setPixelColor(i, 6, color);
-      icicles.setPixelColor(19 - i, 6, color);
+      icicles.setPixelColor(i, centerIndex, color);
+      icicles.setPixelColor(19 - i, centerIndex, color);
 
       animation.addFrame(icicles.toFrame(new Duration({ milliseconds: 30 })));
     }

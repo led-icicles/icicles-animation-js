@@ -20,15 +20,21 @@ export class Color {
     return this._value & 0x0000ff;
   }
 
-  toJson = (): ColorJson => ({
+  public toJson = (): ColorJson => ({
     r: this.red,
     g: this.green,
     b: this.blue,
   });
 
-  notEquals = (color: Color) => !this.equals(color);
+  public toRgb565(): number {
+    return (
+      ((this.red & 0xf8) << 8) + ((this.green & 0xfc) << 3) + (this.blue >> 3)
+    );
+  }
 
-  equals = (color: Color): boolean =>
+  public notEquals = (color: Color) => !this.equals(color);
+
+  public equals = (color: Color): boolean =>
     this.red === color.red &&
     this.green === color.green &&
     this.blue === color.blue;

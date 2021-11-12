@@ -49,6 +49,14 @@ export class VisualFrame extends Frame {
     return typeSize + durationSize + colorsSize;
   }
 
+  /// [(1)type][(2)duration][(ledsCount*2)pixels]
+  public get size565(): number {
+    const typeSize = 1;
+    const durationSize = 2;
+    const colorsSize = this.pixels.length * 3;
+    return typeSize + durationSize + colorsSize;
+  }
+
   public static linearBlend = (
     from: VisualFrame,
     to: VisualFrame,
@@ -70,22 +78,31 @@ export class VisualFrame extends Frame {
     return new VisualFrame(pixels, duration ?? this.duration);
   };
 
-  public toBytes = (): Uint8Array => {
-    const size = this.size;
+  public toBytes = ({
+    rgb565 = false,
+  }: { rgb565?: boolean } = {}): Uint8Array => {
+    const size = rgb565 ? this.size565 : this.size;
 
     let dataPointer: number = 0;
 
     const data = new Uint8Array(size);
     /// frame header
-    data[dataPointer++] = this.type;
+    data[dataPointer++] = rgb565 ? FrameType.AdditiveFrameRgb565 : this.type;
     /// frame duration (little endian)
     data[dataPointer++] = this.duration & 255;
     data[dataPointer++] = this.duration >>> 8;
     /// frame pixels
     for (let i = 0; i < this.pixels.length; i++) {
-      data[dataPointer++] = this.pixels[i].red;
-      data[dataPointer++] = this.pixels[i].green;
-      data[dataPointer++] = this.pixels[i].blue;
+      if (rgb565) {
+        const color565 = this.pixels[i].toRgb565();
+        /// color 565 (little endian)
+        data[dataPointer++] = color565 & 255;
+        data[dataPointer++] = color565 >>> 8;
+      } else {
+        data[dataPointer++] = this.pixels[i].red;
+        data[dataPointer++] = this.pixels[i].green;
+        data[dataPointer++] = this.pixels[i].blue;
+      }
     }
 
     return data;

@@ -11,6 +11,16 @@ export enum FrameType {
   /// [(2 - uint16)pixel_index][(1 -uint8)red][(1 -uint8)green][(1 -uint8)blue]
   /// Therefore it is possible to index `65535` pixels (leds)
   AdditiveFrame = 3,
+
+  /// [(1)type][(2)duration][(ledsCount*2)pixels]
+  VisualFrameRgb565 = 12,
+
+  /// [(1 - uint8)type][(2 - uint16)duration][(2 - uint16)changedPixelsCount][(x)changedPixels]
+  ///
+  /// Changed pixels are described by:
+  /// [(2 - uint16)pixel_index][(1 -uint8)red][(1 -uint8)green][(1 -uint8)blue]
+  /// Therefore it is possible to index `65535` pixels (leds)
+  AdditiveFrameRgb565 = 13,
 }
 
 export abstract class Frame {
