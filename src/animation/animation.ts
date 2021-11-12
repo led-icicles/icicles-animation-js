@@ -289,6 +289,7 @@ export class Animation {
 
           const endIndex = offset + pixelsCount * 2;
           const pixels: Array<Color> = new Array(pixelsCount);
+          let arrayIndex = 0;
           for (let i = offset; i < endIndex; i += 2) {
             const colorData = dataView.getUint16(i, true);
 
@@ -300,7 +301,7 @@ export class Animation {
             const g8 = (g6 * 259 + 33) >> 6;
             const b8 = (b5 * 527 + 23) >> 6;
             const color = new Color(r8, g8, b8);
-            pixels[i / 2] = color;
+            pixels[arrayIndex++] = color;
           }
           offset = endIndex;
 
@@ -349,7 +350,8 @@ export class Animation {
 
           const endIndex = offset + changedPixelsCount * 4;
           const pixels: Array<IndexedColor> = new Array(changedPixelsCount);
-          console.log("changedPixelsCount", changedPixelsCount);
+
+          let arrayIndex = 0;
           for (let i = offset; i < endIndex; i += 4) {
             const pixelIndex = dataView.getUint16(i, true);
 
@@ -368,11 +370,9 @@ export class Animation {
             const color = new Color(r8, g8, b8);
 
             const indexedColor = new IndexedColor(pixelIndex, color);
-
-            pixels[i / 4] = indexedColor;
+            pixels[arrayIndex++] = indexedColor;
           }
           offset = endIndex;
-          console.log("pixels", pixels.length);
 
           animation.addFrame(new AdditiveFrame(pixels, duration));
           break;

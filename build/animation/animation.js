@@ -236,6 +236,7 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                 offset += sizes_1.UINT_16_SIZE_IN_BYTES;
                 const endIndex = offset + pixelsCount * 2;
                 const pixels = new Array(pixelsCount);
+                let arrayIndex = 0;
                 for (let i = offset; i < endIndex; i += 2) {
                     const colorData = dataView.getUint16(i, true);
                     const r5 = (colorData >> 11) & 0x1f;
@@ -245,7 +246,7 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                     const g8 = (g6 * 259 + 33) >> 6;
                     const b8 = (b5 * 527 + 23) >> 6;
                     const color = new color_1.Color(r8, g8, b8);
-                    pixels[i / 2] = color;
+                    pixels[arrayIndex++] = color;
                 }
                 offset = endIndex;
                 animation.addFrame(new visual_frame_1.VisualFrame(pixels, duration));
@@ -280,7 +281,7 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                 offset += sizes_1.UINT_16_SIZE_IN_BYTES;
                 const endIndex = offset + changedPixelsCount * 4;
                 const pixels = new Array(changedPixelsCount);
-                console.log("changedPixelsCount", changedPixelsCount);
+                let arrayIndex = 0;
                 for (let i = offset; i < endIndex; i += 4) {
                     const pixelIndex = dataView.getUint16(i, true);
                     const colorData = dataView.getUint16(i + sizes_1.UINT_16_SIZE_IN_BYTES, true);
@@ -292,10 +293,9 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                     const b8 = (b5 * 527 + 23) >> 6;
                     const color = new color_1.Color(r8, g8, b8);
                     const indexedColor = new color_1.IndexedColor(pixelIndex, color);
-                    pixels[i / 4] = indexedColor;
+                    pixels[arrayIndex++] = indexedColor;
                 }
                 offset = endIndex;
-                console.log("pixels", pixels.length);
                 animation.addFrame(new additive_frame_1.AdditiveFrame(pixels, duration));
                 break;
             }
