@@ -348,7 +348,7 @@ export class Animation {
           offset += UINT_16_SIZE_IN_BYTES;
 
           const endIndex = offset + changedPixelsCount * 4;
-          const pixels: Array<IndexedColor> = new Array(changedPixelsCount * 4);
+          const pixels: Array<IndexedColor> = new Array(changedPixelsCount);
           for (let i = offset; i < endIndex; i += 4) {
             const pixelIndex = dataView.getUint16(i, true);
 

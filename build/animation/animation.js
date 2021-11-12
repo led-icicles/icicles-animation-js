@@ -279,7 +279,7 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                 const changedPixelsCount = dataView.getUint16(offset, true);
                 offset += sizes_1.UINT_16_SIZE_IN_BYTES;
                 const endIndex = offset + changedPixelsCount * 4;
-                const pixels = new Array(changedPixelsCount * 4);
+                const pixels = new Array(changedPixelsCount);
                 for (let i = offset; i < endIndex; i += 4) {
                     const pixelIndex = dataView.getUint16(i, true);
                     const colorData = dataView.getUint16(i + sizes_1.UINT_16_SIZE_IN_BYTES, true);
