@@ -11,6 +11,7 @@ export declare class Color {
     get green(): number;
     get blue(): number;
     toJson: () => ColorJson;
+    toRgb565(): number;
     notEquals: (color: Color) => boolean;
     equals: (color: Color) => boolean;
     toIndexedColor: (index: number) => IndexedColor;

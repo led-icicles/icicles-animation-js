@@ -28,6 +28,9 @@ class Color {
     get blue() {
         return this._value & 0x0000ff;
     }
+    toRgb565() {
+        return (((this.red & 0xf8) << 8) + ((this.green & 0xfc) << 3) + (this.blue >> 3));
+    }
 }
 exports.Color = Color;
 Color.linearBlend = (left, right, progress) => {

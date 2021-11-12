@@ -13,7 +13,10 @@ export declare class VisualFrame extends Frame {
         pixels?: Color[] | undefined;
     }) => VisualFrame;
     get size(): number;
+    get size565(): number;
     static linearBlend: (from: VisualFrame, to: VisualFrame, progress: number, duration?: number | undefined) => VisualFrame;
     darken: (progress: number, duration?: number | undefined) => VisualFrame;
-    toBytes: () => Uint8Array;
+    toBytes: ({ rgb565, }?: {
+        rgb565?: boolean | undefined;
+    }) => Uint8Array;
 }

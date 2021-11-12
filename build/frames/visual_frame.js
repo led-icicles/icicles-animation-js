@@ -16,20 +16,28 @@ class VisualFrame extends frame_1.Frame {
             const pixels = this.pixels.map((color) => color.darken(progress));
             return new VisualFrame(pixels, duration !== null && duration !== void 0 ? duration : this.duration);
         };
-        this.toBytes = () => {
-            const size = this.size;
+        this.toBytes = ({ rgb565 = false, } = {}) => {
+            const size = rgb565 ? this.size565 : this.size;
             let dataPointer = 0;
             const data = new Uint8Array(size);
             /// frame header
-            data[dataPointer++] = this.type;
+            data[dataPointer++] = rgb565 ? frame_1.FrameType.AdditiveFrameRgb565 : this.type;
             /// frame duration (little endian)
             data[dataPointer++] = this.duration & 255;
             data[dataPointer++] = this.duration >>> 8;
             /// frame pixels
             for (let i = 0; i < this.pixels.length; i++) {
-                data[dataPointer++] = this.pixels[i].red;
-                data[dataPointer++] = this.pixels[i].green;
-                data[dataPointer++] = this.pixels[i].blue;
+                if (rgb565) {
+                    const color565 = this.pixels[i].toRgb565();
+                    /// color 565 (little endian)
+                    data[dataPointer++] = color565 & 255;
+                    data[dataPointer++] = color565 >>> 8;
+                }
+                else {
+                    data[dataPointer++] = this.pixels[i].red;
+                    data[dataPointer++] = this.pixels[i].green;
+                    data[dataPointer++] = this.pixels[i].blue;
+                }
             }
             return data;
         };
@@ -39,6 +47,13 @@ class VisualFrame extends frame_1.Frame {
     }
     /// [(1)type][(2)duration][(ledsCount*3)pixels]
     get size() {
+        const typeSize = 1;
+        const durationSize = 2;
+        const colorsSize = this.pixels.length * 3;
+        return typeSize + durationSize + colorsSize;
+    }
+    /// [(1)type][(2)duration][(ledsCount*2)pixels]
+    get size565() {
         const typeSize = 1;
         const durationSize = 2;
         const colorsSize = this.pixels.length * 3;

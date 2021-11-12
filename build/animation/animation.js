@@ -20,9 +20,10 @@ const visual_frame_1 = require("../frames/visual_frame");
 const additive_frame_1 = require("../frames/additive_frame");
 class Animation {
     constructor(options) {
-        var _b;
+        var _b, _c;
         this._frames = [];
         this.optimize = false;
+        this.useRgb565 = false;
         this.addFrame = (newFrame) => {
             if (!newFrame) {
                 throw new Error("Frame was not provided.");
@@ -114,7 +115,9 @@ class Animation {
                 console.log(`Writing ${this._frames.length} frames...`);
                 let framesToFileStart = Date.now();
                 for (const frame of this._frames) {
-                    const frameBytes = frame.toBytes();
+                    const frameBytes = frame instanceof visual_frame_1.VisualFrame || frame instanceof additive_frame_1.AdditiveFrame
+                        ? frame.toBytes({ rgb565: this.useRgb565 })
+                        : frame.toBytes();
                     yield new Promise((res, rej) => stream.write(frameBytes, (err) => {
                         if (err)
                             rej(err);
@@ -145,9 +148,8 @@ class Animation {
         this._currentView = new visual_frame_1.VisualFrame(new Array(this._header.ledsCount).fill(new color_1.Color(0, 0, 0)), 
         /// zero duration - this is just a placeholder
         0);
-        if (options) {
-            this.optimize = (_b = options.optimize) !== null && _b !== void 0 ? _b : false;
-        }
+        this.optimize = (_b = options.optimize) !== null && _b !== void 0 ? _b : false;
+        this.useRgb565 = (_c = options.useRgb565) !== null && _c !== void 0 ? _c : false;
     }
     get frames() {
         return this._frames.slice(0);
@@ -229,6 +231,26 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                 animation.addFrame(new visual_frame_1.VisualFrame(pixels, duration));
                 break;
             }
+            case frame_1.FrameType.VisualFrameRgb565: {
+                const duration = dataView.getUint16(offset, true);
+                offset += sizes_1.UINT_16_SIZE_IN_BYTES;
+                const endIndex = offset + pixelsCount * 2;
+                const pixels = new Array(pixelsCount);
+                for (let i = offset; i < endIndex; i += 2) {
+                    const colorData = dataView.getUint16(i, true);
+                    const r5 = (colorData >> 11) & 0x1f;
+                    const g6 = (colorData >> 5) & 0x3f;
+                    const b5 = colorData & 0x1f;
+                    const r8 = (r5 * 527 + 23) >> 6;
+                    const g8 = (g6 * 259 + 33) >> 6;
+                    const b8 = (b5 * 527 + 23) >> 6;
+                    const color = new color_1.Color(r8, g8, b8);
+                    pixels[i / 2] = color;
+                }
+                offset = endIndex;
+                animation.addFrame(new visual_frame_1.VisualFrame(pixels, duration));
+                break;
+            }
             case frame_1.FrameType.DelayFrame: {
                 const duration = dataView.getUint16(offset, true);
                 offset += sizes_1.UINT_16_SIZE_IN_BYTES;
@@ -246,6 +268,30 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                     const pixelIndex = dataView.getUint16(i, true);
                     const indexedColor = new color_1.IndexedColor(pixelIndex, new color_1.Color(data[i + sizes_1.UINT_16_SIZE_IN_BYTES], data[i + sizes_1.UINT_16_SIZE_IN_BYTES + 1], data[i + sizes_1.UINT_16_SIZE_IN_BYTES + 2]));
                     pixels.push(indexedColor);
+                }
+                offset = endIndex;
+                animation.addFrame(new additive_frame_1.AdditiveFrame(pixels, duration));
+                break;
+            }
+            case frame_1.FrameType.AdditiveFrameRgb565: {
+                const duration = dataView.getUint16(offset, true);
+                offset += sizes_1.UINT_16_SIZE_IN_BYTES;
+                const changedPixelsCount = dataView.getUint16(offset, true);
+                offset += sizes_1.UINT_16_SIZE_IN_BYTES;
+                const endIndex = offset + changedPixelsCount * 4;
+                const pixels = new Array(changedPixelsCount * 4);
+                for (let i = offset; i < endIndex; i += 4) {
+                    const pixelIndex = dataView.getUint16(i, true);
+                    const colorData = dataView.getUint16(i + sizes_1.UINT_16_SIZE_IN_BYTES, true);
+                    const r5 = (colorData >> 11) & 0x1f;
+                    const g6 = (colorData >> 5) & 0x3f;
+                    const b5 = colorData & 0x1f;
+                    const r8 = (r5 * 527 + 23) >> 6;
+                    const g8 = (g6 * 259 + 33) >> 6;
+                    const b8 = (b5 * 527 + 23) >> 6;
+                    const color = new color_1.Color(r8, g8, b8);
+                    const indexedColor = new color_1.IndexedColor(pixelIndex, color);
+                    pixels[i / 4] = indexedColor;
                 }
                 offset = endIndex;
                 animation.addFrame(new additive_frame_1.AdditiveFrame(pixels, duration));

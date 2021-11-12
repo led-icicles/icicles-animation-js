@@ -4,6 +4,7 @@ import { Frame } from "../frames/frame";
 import { VisualFrame } from "../frames/visual_frame";
 export declare type AnimationOptions = {
     optimize?: boolean;
+    useRgb565?: boolean;
 };
 export declare class Animation {
     private readonly _frames;
@@ -13,6 +14,7 @@ export declare class Animation {
     play(): Generator<VisualFrame, void, VisualFrame>;
     private _currentView;
     readonly optimize: boolean;
+    readonly useRgb565: boolean;
     constructor(options: AnimationOptions & AnimationHeaderData);
     addFrame: (newFrame: Frame) => void;
     get duration(): number;

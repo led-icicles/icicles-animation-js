@@ -11,5 +11,8 @@ export declare class AdditiveFrame extends Frame {
     mergeOnto(frame: VisualFrame): VisualFrame;
     static fromVisualFrames: (prevFrame: VisualFrame, nextFrame: VisualFrame) => AdditiveFrame;
     get size(): number;
-    toBytes: () => Uint8Array;
+    get size565(): number;
+    toBytes: ({ rgb565, }?: {
+        rgb565?: boolean | undefined;
+    }) => Uint8Array;
 }

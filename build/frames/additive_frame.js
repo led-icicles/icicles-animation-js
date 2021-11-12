@@ -10,12 +10,12 @@ class AdditiveFrame extends frame_1.Frame {
         this.changedPixels = changedPixels;
         this.duration = duration;
         this.type = frame_1.FrameType.AdditiveFrame;
-        this.toBytes = () => {
-            const size = this.size;
+        this.toBytes = ({ rgb565 = false, } = {}) => {
+            const size = rgb565 ? this.size565 : this.size;
             let dataPointer = 0;
             const data = new Uint8Array(size);
             /// frame header
-            data[dataPointer++] = this.type;
+            data[dataPointer++] = rgb565 ? frame_1.FrameType.AdditiveFrameRgb565 : this.type;
             /// frame duration (little endian)
             data[dataPointer++] = this.duration & 255;
             data[dataPointer++] = this.duration >>> 8;
@@ -31,9 +31,17 @@ class AdditiveFrame extends frame_1.Frame {
                 data[dataPointer++] = index & 255;
                 data[dataPointer++] = index >>> 8;
                 const color = changedPixel.color;
-                data[dataPointer++] = color.red;
-                data[dataPointer++] = color.green;
-                data[dataPointer++] = color.blue;
+                if (rgb565) {
+                    const color565 = color.toRgb565();
+                    /// color 565 (little endian)
+                    data[dataPointer++] = color565 & 255;
+                    data[dataPointer++] = color565 >>> 8;
+                }
+                else {
+                    data[dataPointer++] = color.red;
+                    data[dataPointer++] = color.green;
+                    data[dataPointer++] = color.blue;
+                }
             }
             return data;
         };
@@ -59,6 +67,14 @@ class AdditiveFrame extends frame_1.Frame {
         const sizeFieldSize = 2;
         // [(2 - uint16)pixel_index][(1 -uint8)red][(1 -uint8)green][(1 -uint8)blue]
         const changedPixelsSize = this.changedPixels.length * 5;
+        return typeSize + durationSize + sizeFieldSize + changedPixelsSize;
+    }
+    // [(1 - uint8)type][(2 - uint16)duration][(2 - uint16)size][(x * 5)changedPixels]
+    get size565() {
+        const typeSize = 1;
+        const durationSize = 2;
+        const sizeFieldSize = 2;
+        const changedPixelsSize = this.changedPixels.length * 4;
         return typeSize + durationSize + sizeFieldSize + changedPixelsSize;
     }
 }

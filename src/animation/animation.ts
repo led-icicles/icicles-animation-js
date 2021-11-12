@@ -210,7 +210,10 @@ export class Animation {
       let framesToFileStart = Date.now();
 
       for (const frame of this._frames) {
-        const frameBytes = frame.toBytes();
+        const frameBytes =
+          frame instanceof VisualFrame || frame instanceof AdditiveFrame
+            ? frame.toBytes({ rgb565: this.useRgb565 })
+            : frame.toBytes();
 
         await new Promise<void>((res, rej) =>
           stream.write(frameBytes, (err) => {
