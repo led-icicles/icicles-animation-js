@@ -89,6 +89,12 @@ export class Animation {
     } else if (newFrame instanceof DelayFrame) {
       this._frames.push(newFrame);
       return;
+    } else if (
+      newFrame instanceof AdditiveFrameRgb565 ||
+      newFrame instanceof VisualFrameRgb565
+    ) {
+      this._frames.push(newFrame);
+      return;
     } else if (newFrame instanceof AdditiveFrame) {
       this._frames.push(newFrame);
       return;

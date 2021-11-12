@@ -38,6 +38,11 @@ class Animation {
                 this._frames.push(newFrame);
                 return;
             }
+            else if (newFrame instanceof additive_frame_rgb565_1.AdditiveFrameRgb565 ||
+                newFrame instanceof visual_frame_rgb565_1.VisualFrameRgb565) {
+                this._frames.push(newFrame);
+                return;
+            }
             else if (newFrame instanceof additive_frame_1.AdditiveFrame) {
                 this._frames.push(newFrame);
                 return;
