@@ -53,7 +53,7 @@ export class VisualFrame extends Frame {
   public get size565(): number {
     const typeSize = 1;
     const durationSize = 2;
-    const colorsSize = this.pixels.length * 3;
+    const colorsSize = this.pixels.length * 2;
     return typeSize + durationSize + colorsSize;
   }
 
