@@ -1,15 +1,8 @@
-import { Color } from "../utils";
-import { Frame, FrameType } from "./frame";
+import { VisualFrame } from ".";
+import { FrameType } from "./frame";
 
-export class VisualFrameRgb565 extends Frame {
+export class VisualFrameRgb565 extends VisualFrame {
   public readonly type: FrameType = FrameType.VisualFrameRgb565;
-
-  constructor(
-    public readonly pixels: Array<Color>,
-    public readonly duration: number
-  ) {
-    super(duration);
-  }
 
   /// [(1)type][(2)duration][(ledsCount*2)pixels]
   public get size(): number {
@@ -40,4 +33,8 @@ export class VisualFrameRgb565 extends Frame {
 
     return data;
   };
+
+  public static fromVisualFrame(frame: VisualFrame): VisualFrameRgb565 {
+    return new VisualFrameRgb565(frame.pixels.slice(0), frame.duration);
+  }
 }

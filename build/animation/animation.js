@@ -122,10 +122,17 @@ class Animation {
                 console.log(`Writing ${this._frames.length} frames...`);
                 let framesToFileStart = Date.now();
                 for (const frame of this._frames) {
-                    const frameBytes = frame instanceof visual_frame_1.VisualFrame || frame instanceof additive_frame_1.AdditiveFrame
-                        ? frame.toRgb565().toBytes()
-                        : frame.toBytes();
-                    yield new Promise((res, rej) => stream.write(frameBytes, (err) => {
+                    let bytes;
+                    if (this.useRgb565) {
+                        if (frame instanceof visual_frame_1.VisualFrame) {
+                            bytes = visual_frame_rgb565_1.VisualFrameRgb565.fromVisualFrame(frame).toBytes();
+                        }
+                        else if (frame instanceof additive_frame_1.AdditiveFrame) {
+                            bytes = additive_frame_rgb565_1.AdditiveFrameRgb565.fromAdditiveFrame(frame).toBytes();
+                        }
+                    }
+                    bytes !== null && bytes !== void 0 ? bytes : (bytes = frame.toBytes());
+                    yield new Promise((res, rej) => stream.write(bytes, (err) => {
                         if (err)
                             rej(err);
                         res();

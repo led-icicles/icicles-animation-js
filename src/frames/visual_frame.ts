@@ -1,6 +1,5 @@
 import { Color } from "../utils/color";
 import { Frame, FrameType } from "./frame";
-import { VisualFrameRgb565 } from "./visual_frame_rgb565";
 
 export class VisualFrame extends Frame {
   public readonly type: FrameType = FrameType.VisualFrame;
@@ -70,10 +69,6 @@ export class VisualFrame extends Frame {
 
     return new VisualFrame(pixels, duration ?? this.duration);
   };
-
-  public toRgb565(): VisualFrameRgb565 {
-    return new VisualFrameRgb565(this.pixels.slice(0), this.duration);
-  }
 
   public toBytes = (): Uint8Array => {
     const size = this.size;

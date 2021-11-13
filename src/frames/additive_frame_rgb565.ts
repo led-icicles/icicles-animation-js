@@ -1,15 +1,8 @@
-import { IndexedColor } from "../utils";
-import { Frame, FrameType } from "./frame";
+import { AdditiveFrame } from ".";
+import { FrameType } from "./frame";
 
-export class AdditiveFrameRgb565 extends Frame {
+export class AdditiveFrameRgb565 extends AdditiveFrame {
   public readonly type: FrameType = FrameType.AdditiveFrameRgb565;
-
-  constructor(
-    public readonly changedPixels: Array<IndexedColor>,
-    public readonly duration: number
-  ) {
-    super(duration);
-  }
 
   // [(1 - uint8)type][(2 - uint16)duration][(2 - uint16)size][(x * 5)changedPixels]
   public get size(): number {
@@ -54,4 +47,11 @@ export class AdditiveFrameRgb565 extends Frame {
 
     return data;
   };
+
+  public static fromAdditiveFrame(frame: AdditiveFrame): AdditiveFrameRgb565 {
+    return new AdditiveFrameRgb565(
+      frame.changedPixels.slice(0),
+      frame.duration
+    );
+  }
 }

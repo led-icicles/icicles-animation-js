@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.VisualFrame = void 0;
 const color_1 = require("../utils/color");
 const frame_1 = require("./frame");
-const visual_frame_rgb565_1 = require("./visual_frame_rgb565");
 class VisualFrame extends frame_1.Frame {
     constructor(pixels, duration) {
         super(duration);
@@ -44,9 +43,6 @@ class VisualFrame extends frame_1.Frame {
         const durationSize = 2;
         const colorsSize = this.pixels.length * 3;
         return typeSize + durationSize + colorsSize;
-    }
-    toRgb565() {
-        return new visual_frame_rgb565_1.VisualFrameRgb565(this.pixels.slice(0), this.duration);
     }
 }
 exports.VisualFrame = VisualFrame;

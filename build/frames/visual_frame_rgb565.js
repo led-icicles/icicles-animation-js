@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VisualFrameRgb565 = void 0;
+const _1 = require(".");
 const frame_1 = require("./frame");
-class VisualFrameRgb565 extends frame_1.Frame {
-    constructor(pixels, duration) {
-        super(duration);
-        this.pixels = pixels;
-        this.duration = duration;
+class VisualFrameRgb565 extends _1.VisualFrame {
+    constructor() {
+        super(...arguments);
         this.type = frame_1.FrameType.VisualFrameRgb565;
         this.toBytes = () => {
             const size = this.size;
@@ -33,6 +32,9 @@ class VisualFrameRgb565 extends frame_1.Frame {
         const durationSize = 2;
         const colorsSize = this.pixels.length * 2;
         return typeSize + durationSize + colorsSize;
+    }
+    static fromVisualFrame(frame) {
+        return new VisualFrameRgb565(frame.pixels.slice(0), frame.duration);
     }
 }
 exports.VisualFrameRgb565 = VisualFrameRgb565;

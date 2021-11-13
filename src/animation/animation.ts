@@ -218,13 +218,19 @@ export class Animation {
       let framesToFileStart = Date.now();
 
       for (const frame of this._frames) {
-        const frameBytes =
-          frame instanceof VisualFrame || frame instanceof AdditiveFrame
-            ? frame.toRgb565().toBytes()
-            : frame.toBytes();
+        let bytes: Uint8Array;
+        if (this.useRgb565) {
+          if (frame instanceof VisualFrame) {
+            bytes = VisualFrameRgb565.fromVisualFrame(frame).toBytes();
+          } else if (frame instanceof AdditiveFrame) {
+            bytes = AdditiveFrameRgb565.fromAdditiveFrame(frame).toBytes();
+          }
+        }
+
+        bytes ??= frame.toBytes();
 
         await new Promise<void>((res, rej) =>
-          stream.write(frameBytes, (err) => {
+          stream.write(bytes, (err) => {
             if (err) rej(err);
             res();
           })

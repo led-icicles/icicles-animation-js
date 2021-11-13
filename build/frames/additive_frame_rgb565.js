@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdditiveFrameRgb565 = void 0;
+const _1 = require(".");
 const frame_1 = require("./frame");
-class AdditiveFrameRgb565 extends frame_1.Frame {
-    constructor(changedPixels, duration) {
-        super(duration);
-        this.changedPixels = changedPixels;
-        this.duration = duration;
+class AdditiveFrameRgb565 extends _1.AdditiveFrame {
+    constructor() {
+        super(...arguments);
         this.type = frame_1.FrameType.AdditiveFrameRgb565;
         this.toBytes = () => {
             const size = this.size;
@@ -44,6 +43,9 @@ class AdditiveFrameRgb565 extends frame_1.Frame {
         const sizeFieldSize = 2;
         const changedPixelsSize = this.changedPixels.length * 4;
         return typeSize + durationSize + sizeFieldSize + changedPixelsSize;
+    }
+    static fromAdditiveFrame(frame) {
+        return new AdditiveFrameRgb565(frame.changedPixels.slice(0), frame.duration);
     }
 }
 exports.AdditiveFrameRgb565 = AdditiveFrameRgb565;

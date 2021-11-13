@@ -1,6 +1,5 @@
 import { IndexedColor } from "../utils/color";
 import { UINT_16_MAX_SIZE } from "../utils/sizes";
-import { AdditiveFrameRgb565 } from "./additive_frame_rgb565";
 import { Frame, FrameType } from "./frame";
 import { VisualFrame } from "./visual_frame";
 
@@ -75,10 +74,6 @@ export class AdditiveFrame extends Frame {
     // [(2 - uint16)pixel_index][(1 -uint8)red][(1 -uint8)green][(1 -uint8)blue]
     const changedPixelsSize = this.changedPixels.length * 5;
     return typeSize + durationSize + sizeFieldSize + changedPixelsSize;
-  }
-
-  public toRgb565(): AdditiveFrameRgb565 {
-    return new AdditiveFrameRgb565(this.changedPixels.slice(0), this.duration);
   }
 
   public toBytes = (): Uint8Array => {
