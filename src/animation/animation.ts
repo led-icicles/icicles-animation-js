@@ -110,7 +110,7 @@ export class Animation {
   /// Current pixels view
   private _currentView: VisualFrame;
   public get currentView(): VisualFrame {
-    return this.currentView;
+    return this._currentView;
   }
   public readonly optimize: boolean = false;
   public readonly useRgb565: boolean = false;

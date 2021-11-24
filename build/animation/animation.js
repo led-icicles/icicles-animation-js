@@ -282,7 +282,7 @@ class Animation {
         return new AnimationView(intialFrame, radioPanels);
     }
     get currentView() {
-        return this.currentView;
+        return this._currentView;
     }
     //** Animation duration in milliseconds - loops included */
     get duration() {
