@@ -58,7 +58,9 @@ class Animation {
                 if (this.optimize) {
                     const isChanged = newFrame.isBroadcast
                         ? this._radioPanels.some((p) => p.color.notEquals(newFrame.color))
-                        : this._radioPanels[newFrame.panelIndex - 1].color.notEquals(newFrame.color); // panel index is shifted due to broadcast panel at index 0
+                        : this._radioPanels
+                            .find((p) => p.index == newFrame.panelIndex)
+                            .color.notEquals(newFrame.color); // panel index is shifted due to broadcast panel at index 0
                     if (!isChanged) {
                         if (newFrame.duration === 0) {
                             console.warn(`[OPTIMIZE] Skipping radio frame. No color changes. Size reduced by ${newFrame.size}B.`);
@@ -86,6 +88,7 @@ class Animation {
                             });
                         }
                         this._frames.push(newFrame);
+                        return;
                     }
                 }
                 else {
@@ -272,7 +275,9 @@ class Animation {
                             }
                         }),
                     });
-                    yield view;
+                    if (frame.duration !== 0) {
+                        yield view;
+                    }
                 }
                 else {
                     throw new Error(`Unsupported frame type: "${frame.type}"`);

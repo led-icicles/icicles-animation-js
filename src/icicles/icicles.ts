@@ -1,10 +1,11 @@
 import { Color } from "../utils/color";
 import { VisualFrame } from "../frames/visual_frame";
-import { Duration, Animation, RadioColorFrame, RadioPanelView } from "..";
+import { Duration, Animation, RadioColorFrame } from "..";
 
 export class Icicles {
+  private readonly _pixels: Array<Color>;
   public get pixels(): Array<Color> {
-    return this.animation.currentView.pixels.slice(0);
+    return this._pixels.slice(0);
   }
 
   public get xCount(): number {
@@ -14,7 +15,9 @@ export class Icicles {
     return this.animation.header.yCount;
   }
 
-  constructor(public readonly animation: Animation) {}
+  constructor(public readonly animation: Animation) {
+    this._pixels = new Array(animation.header.ledsCount).fill(new Color());
+  }
 
   private _isValidIndex(index: number): void {
     if (index >= this.pixels.length || index < 0) {
@@ -78,9 +81,9 @@ export class Icicles {
         `Unsupported pixels length: "${pixels.length}". Size of "${this.pixels.length}" is allowed.`
       );
     }
-
-    this.pixels.length = 0;
-    this.pixels.push(...pixels);
+    for (let i = 0; i < this.pixels.length; i++) {
+      this._pixels[i] = pixels[i];
+    }
   };
 
   public toFrame = (duration: Duration): VisualFrame => {

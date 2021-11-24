@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Icicles = void 0;
+const color_1 = require("../utils/color");
 const visual_frame_1 = require("../frames/visual_frame");
 const __1 = require("..");
 class Icicles {
@@ -46,16 +47,18 @@ class Icicles {
             if (this.pixels.length !== pixels.length) {
                 throw new Error(`Unsupported pixels length: "${pixels.length}". Size of "${this.pixels.length}" is allowed.`);
             }
-            this.pixels.length = 0;
-            this.pixels.push(...pixels);
+            for (let i = 0; i < this.pixels.length; i++) {
+                this._pixels[i] = pixels[i];
+            }
         };
         this.toFrame = (duration) => {
             const copiedPixels = this.pixels.slice(0);
             return new visual_frame_1.VisualFrame(copiedPixels, duration.milliseconds);
         };
+        this._pixels = new Array(animation.header.ledsCount).fill(new color_1.Color());
     }
     get pixels() {
-        return this.animation.currentView.pixels.slice(0);
+        return this._pixels.slice(0);
     }
     get xCount() {
         return this.animation.header.xCount;
