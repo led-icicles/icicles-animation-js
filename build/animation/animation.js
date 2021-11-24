@@ -47,10 +47,6 @@ class Animation {
             if (!newFrame) {
                 throw new Error("Frame was not provided.");
             }
-            else if (newFrame.duration < 16) {
-                throw new Error("The animation can't run faster than 60 FPS (preferred: 30 FPS). " +
-                    "Therefore, the inter-frame delay cannot be less than 16ms.");
-            }
             else if (newFrame instanceof delay_frame_1.DelayFrame) {
                 this._frames.push(newFrame);
                 return;
@@ -59,8 +55,43 @@ class Animation {
                 if (newFrame.panelIndex > this.header.radioPanelsCount) {
                     throw new Error(`Invalid panel index (${newFrame.panelIndex}). This animation supports "${this.header.radioPanelsCount}" radio panels.`);
                 }
-                this._frames.push(newFrame);
+                if (this.optimize) {
+                    const isChanged = newFrame.isBroadcast
+                        ? this._radioPanels.some((p) => p.color.notEquals(newFrame.color))
+                        : this._radioPanels[newFrame.panelIndex - 1].color.notEquals(newFrame.color); // panel index is shifted due to broadcast panel at index 0
+                    if (!isChanged) {
+                        if (newFrame.duration === 0) {
+                            console.warn(`[OPTIMIZE] Skipping radio frame. No color changes. Size reduced by ${newFrame.size}B.`);
+                            return;
+                        }
+                        else {
+                            const delayFrame = new delay_frame_1.DelayFrame(newFrame.duration);
+                            console.warn(`[OPTIMIZE] No changes, replacing radio frame with delay frame. Size reduced by ${newFrame.size - delayFrame.size}B.`);
+                            this._frames.push(delayFrame);
+                            return;
+                        }
+                    }
+                    else {
+                        if (newFrame.isBroadcast) {
+                            this._radioPanels.map((p) => p.copyWith({ color: newFrame.color }));
+                        }
+                        else {
+                            // shift index due to broadcast panel at 0
+                            this._radioPanels[newFrame.panelIndex - 1] = this._radioPanels[newFrame.panelIndex - 1].copyWith({
+                                color: newFrame.color,
+                            });
+                        }
+                        this._frames.push(newFrame);
+                    }
+                }
+                else {
+                    this._frames.push(newFrame);
+                }
                 return;
+            }
+            else if (newFrame.duration < 16) {
+                throw new Error("The animation can't run faster than 60 FPS (preferred: 30 FPS). " +
+                    "Therefore, the inter-frame delay cannot be less than 16ms.");
             }
             else if (newFrame instanceof additive_frame_rgb565_1.AdditiveFrameRgb565 ||
                 newFrame instanceof visual_frame_rgb565_1.VisualFrameRgb565) {
@@ -179,6 +210,7 @@ class Animation {
             yCount: options.yCount,
             loopsCount: options.loopsCount,
             versionNumber: options.versionNumber,
+            radioPanelsCount: options.radioPanelsCount,
         });
         /// Before each animation leds are set to black color.
         /// But black color is not displayed. To set all pixels to black,
@@ -188,6 +220,9 @@ class Animation {
         0);
         this.optimize = (_b = options.optimize) !== null && _b !== void 0 ? _b : false;
         this.useRgb565 = (_c = options.useRgb565) !== null && _c !== void 0 ? _c : false;
+        this._radioPanels = new Array(options.radioPanelsCount)
+            .fill(undefined)
+            .map((_, inedex) => new RadioPanelView(inedex + 1, new color_1.Color()));
     }
     get frames() {
         return this._frames.slice(0);

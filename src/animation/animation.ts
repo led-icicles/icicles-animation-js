@@ -28,6 +28,7 @@ export class RadioPanelView {
     color?: Color;
   } = {}) => new RadioPanelView(index ?? this.index, color ?? this.color);
 }
+
 export class AnimationView {
   constructor(
     public readonly frame: VisualFrame,
@@ -103,6 +104,7 @@ export class Animation {
       }
     }
   }
+  protected _radioPanels: Array<RadioPanelView>;
 
   /// Current pixels view
   private _currentView: VisualFrame;
@@ -116,6 +118,7 @@ export class Animation {
       yCount: options.yCount,
       loopsCount: options.loopsCount,
       versionNumber: options.versionNumber,
+      radioPanelsCount: options.radioPanelsCount,
     });
     /// Before each animation leds are set to black color.
     /// But black color is not displayed. To set all pixels to black,
@@ -128,16 +131,15 @@ export class Animation {
 
     this.optimize = options.optimize ?? false;
     this.useRgb565 = options.useRgb565 ?? false;
+
+    this._radioPanels = new Array(options.radioPanelsCount)
+      .fill(undefined)
+      .map((_, inedex) => new RadioPanelView(inedex + 1, new Color()));
   }
 
   public addFrame = (newFrame: Frame): void => {
     if (!newFrame) {
       throw new Error("Frame was not provided.");
-    } else if (newFrame.duration < 16) {
-      throw new Error(
-        "The animation can't run faster than 60 FPS (preferred: 30 FPS). " +
-          "Therefore, the inter-frame delay cannot be less than 16ms."
-      );
     } else if (newFrame instanceof DelayFrame) {
       this._frames.push(newFrame);
       return;
@@ -147,8 +149,50 @@ export class Animation {
           `Invalid panel index (${newFrame.panelIndex}). This animation supports "${this.header.radioPanelsCount}" radio panels.`
         );
       }
-      this._frames.push(newFrame);
+      if (this.optimize) {
+        const isChanged = newFrame.isBroadcast
+          ? this._radioPanels.some((p) => p.color.notEquals(newFrame.color))
+          : this._radioPanels[newFrame.panelIndex - 1].color.notEquals(
+              newFrame.color
+            ); // panel index is shifted due to broadcast panel at index 0
+        if (!isChanged) {
+          if (newFrame.duration === 0) {
+            console.warn(
+              `[OPTIMIZE] Skipping radio frame. No color changes. Size reduced by ${newFrame.size}B.`
+            );
+            return;
+          } else {
+            const delayFrame = new DelayFrame(newFrame.duration);
+            console.warn(
+              `[OPTIMIZE] No changes, replacing radio frame with delay frame. Size reduced by ${
+                newFrame.size - delayFrame.size
+              }B.`
+            );
+            this._frames.push(delayFrame);
+            return;
+          }
+        } else {
+          if (newFrame.isBroadcast) {
+            this._radioPanels.map((p) => p.copyWith({ color: newFrame.color }));
+          } else {
+            // shift index due to broadcast panel at 0
+            this._radioPanels[newFrame.panelIndex - 1] = this._radioPanels[
+              newFrame.panelIndex - 1
+            ].copyWith({
+              color: newFrame.color,
+            });
+          }
+          this._frames.push(newFrame);
+        }
+      } else {
+        this._frames.push(newFrame);
+      }
       return;
+    } else if (newFrame.duration < 16) {
+      throw new Error(
+        "The animation can't run faster than 60 FPS (preferred: 30 FPS). " +
+          "Therefore, the inter-frame delay cannot be less than 16ms."
+      );
     } else if (
       newFrame instanceof AdditiveFrameRgb565 ||
       newFrame instanceof VisualFrameRgb565

@@ -1,11 +1,19 @@
 import { Color } from "../utils/color";
 import { VisualFrame } from "../frames/visual_frame";
-import { Duration } from "..";
+import { Duration, Animation, RadioColorFrame, RadioPanelView } from "..";
 
 export class Icicles {
   public readonly pixels: Array<Color>;
-  constructor(public readonly xCount: number, public readonly yCount: number) {
-    this.pixels = new Array(xCount * yCount).fill(new Color(0, 0, 0));
+
+  public get xCount(): number {
+    return this.animation.header.xCount;
+  }
+  public get yCount(): number {
+    return this.animation.header.yCount;
+  }
+
+  constructor(public readonly animation: Animation) {
+    this.pixels = new Array(animation.header.ledsCount).fill(new Color());
   }
 
   private _isValidIndex(index: number): void {
@@ -64,7 +72,7 @@ export class Icicles {
     this.pixels.fill(color);
   };
 
-  public setPixels = (pixels: Array<Color>) => {
+  public setPixels = (pixels: Array<Color>): void => {
     if (this.pixels.length !== pixels.length) {
       throw new Error(
         `Unsupported pixels length: "${pixels.length}". Size of "${this.pixels.length}" is allowed.`
@@ -79,4 +87,25 @@ export class Icicles {
     const copiedPixels = this.pixels.slice(0);
     return new VisualFrame(copiedPixels, duration.milliseconds);
   };
+
+  /**
+   * When setting `duration` to any value other than 0ms, the panel color will be displayed
+   * immediately and the next frame will be delayed by the specified time.
+   *
+   * Skipping the `duration` will cause the radio panel colors to be displayed
+   * together with the `show` method invocation.
+   */
+  public setRadioPanelColor(
+    panelIndex: number,
+    color: Color,
+    duration: Duration = new Duration({ milliseconds: 0 })
+  ): void {
+    this.animation.addFrame(
+      new RadioColorFrame(panelIndex, color, duration.milliseconds)
+    );
+  }
+
+  public show(duration: Duration): void {
+    this.animation.addFrame(this.toFrame(duration));
+  }
 }
