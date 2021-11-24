@@ -35,7 +35,8 @@ class Animation {
                 throw new Error("The animation can't run faster than 60 FPS (preferred: 30 FPS). " +
                     "Therefore, the inter-frame delay cannot be less than 16ms.");
             }
-            else if (newFrame instanceof delay_frame_1.DelayFrame) {
+            else if (newFrame instanceof delay_frame_1.DelayFrame ||
+                newFrame instanceof __1.RadioColorFrame) {
                 this._frames.push(newFrame);
                 return;
             }

@@ -87,7 +87,10 @@ export class Animation {
         "The animation can't run faster than 60 FPS (preferred: 30 FPS). " +
           "Therefore, the inter-frame delay cannot be less than 16ms."
       );
-    } else if (newFrame instanceof DelayFrame) {
+    } else if (
+      newFrame instanceof DelayFrame ||
+      newFrame instanceof RadioColorFrame
+    ) {
       this._frames.push(newFrame);
       return;
     } else if (
