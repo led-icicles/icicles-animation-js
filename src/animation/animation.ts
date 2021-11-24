@@ -138,10 +138,15 @@ export class Animation {
         "The animation can't run faster than 60 FPS (preferred: 30 FPS). " +
           "Therefore, the inter-frame delay cannot be less than 16ms."
       );
-    } else if (
-      newFrame instanceof DelayFrame ||
-      newFrame instanceof RadioColorFrame
-    ) {
+    } else if (newFrame instanceof DelayFrame) {
+      this._frames.push(newFrame);
+      return;
+    } else if (newFrame instanceof RadioColorFrame) {
+      if (newFrame.panelIndex > this.header.radioPanelsCount) {
+        throw new Error(
+          `Invalid panel index (${newFrame.panelIndex}). This animation supports "${this.header.radioPanelsCount}" radio panels.`
+        );
+      }
       this._frames.push(newFrame);
       return;
     } else if (
