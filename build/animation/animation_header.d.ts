@@ -7,6 +7,7 @@ export interface AnimationHeaderData {
     readonly yCount: number;
     readonly loopsCount?: number;
     readonly versionNumber?: number;
+    readonly radioPanelsCount?: number;
 }
 export declare class AnimationHeader implements AnimationHeaderData {
     /**  **uint16** max number: `65535` */
@@ -18,12 +19,22 @@ export declare class AnimationHeader implements AnimationHeaderData {
     /**  **uint8** max number: `255` */
     readonly yCount: number;
     /**  **uint16** max number: `65535`
-     * 0 - infinite (or device maximum loop iterations - if defined)
-     * 1 - is a default value
+     *
+     * `0` - infinite (or device maximum loop iterations - if defined)
+     *
+     * `1` - is a default value
      */
     readonly loopsCount: number;
+    /**  **uint8** max number: `255`
+     *
+     * `0` - Animation does not support radio panels. All functionality will be disabled.
+     *     if panels are present, they will play inline animations.
+     *
+     * `1-255` - The radio panels will turn black at the start of the animation and wait for instructions.
+     */
+    readonly radioPanelsCount: number;
     get pixelsCount(): number;
-    constructor({ xCount, yCount, versionNumber: version, name, loopsCount: loops, }: AnimationHeaderData);
+    constructor({ xCount, yCount, versionNumber: version, name, loopsCount: loops, radioPanelsCount, }: AnimationHeaderData);
     get ledsCount(): number;
     get size(): number;
     static readonly isLittleEndian: boolean;
