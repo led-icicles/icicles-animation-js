@@ -141,7 +141,6 @@ AnimationHeader.decode = (buffer) => {
     const xCount = dataView.getUint8(offset++);
     const yCount = dataView.getUint8(offset++);
     const loopsCount = dataView.getUint16(offset, AnimationHeader.isLittleEndian);
-    console.log("loopsCount", loopsCount);
     offset += sizes_1.UINT_16_SIZE_IN_BYTES;
     const radioPanelsCount = dataView.getUint8(offset++);
     return {

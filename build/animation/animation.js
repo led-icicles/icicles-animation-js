@@ -20,6 +20,7 @@ const visual_frame_1 = require("../frames/visual_frame");
 const additive_frame_1 = require("../frames/additive_frame");
 const additive_frame_rgb565_1 = require("../frames/additive_frame_rgb565");
 const visual_frame_rgb565_1 = require("../frames/visual_frame_rgb565");
+const __1 = require("..");
 class Animation {
     constructor(options) {
         var _b, _c;
@@ -270,6 +271,17 @@ Animation.decode = (buffer) => __awaiter(void 0, void 0, void 0, function* () {
                 const duration = dataView.getUint16(offset, true);
                 offset += sizes_1.UINT_16_SIZE_IN_BYTES;
                 animation.addFrame(new delay_frame_1.DelayFrame(duration));
+                break;
+            }
+            case frame_1.FrameType.RadioColorFrame: {
+                const duration = dataView.getUint16(offset, true);
+                offset += sizes_1.UINT_16_SIZE_IN_BYTES;
+                const panelIndex = dataView.getUint8(offset++);
+                const red = dataView.getUint8(offset++);
+                const green = dataView.getUint8(offset++);
+                const blue = dataView.getUint8(offset++);
+                const color = new color_1.Color(red, green, blue);
+                animation.addFrame(new __1.RadioColorFrame(panelIndex, color, duration));
                 break;
             }
             case frame_1.FrameType.AdditiveFrame: {

@@ -10,6 +10,7 @@ import type * as fsTypes from "fs";
 import type * as pathTypes from "path";
 import { AdditiveFrameRgb565 } from "../frames/additive_frame_rgb565";
 import { VisualFrameRgb565 } from "../frames/visual_frame_rgb565";
+import { RadioColorFrame } from "..";
 
 export type AnimationOptions = {
   optimize?: boolean;
@@ -328,6 +329,18 @@ export class Animation {
 
           animation.addFrame(new DelayFrame(duration));
 
+          break;
+        }
+        case FrameType.RadioColorFrame: {
+          const duration = dataView.getUint16(offset, true);
+          offset += UINT_16_SIZE_IN_BYTES;
+          const panelIndex = dataView.getUint8(offset++);
+          const red = dataView.getUint8(offset++);
+          const green = dataView.getUint8(offset++);
+          const blue = dataView.getUint8(offset++);
+
+          const color = new Color(red, green, blue);
+          animation.addFrame(new RadioColorFrame(panelIndex, color, duration));
           break;
         }
         case FrameType.AdditiveFrame: {

@@ -230,7 +230,6 @@ export class AnimationHeader implements AnimationHeaderData {
       offset,
       AnimationHeader.isLittleEndian
     );
-    console.log("loopsCount", loopsCount);
     offset += UINT_16_SIZE_IN_BYTES;
     const radioPanelsCount = dataView.getUint8(offset++);
 
