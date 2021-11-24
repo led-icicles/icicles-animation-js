@@ -17,11 +17,22 @@ export declare class Color {
     toIndexedColor: (index: number) => IndexedColor;
     darken: (progress: number) => Color;
     static linearBlend: (left: Color, right: Color, progress: number) => Color;
+    copyWith: ({ red, green, blue, }?: {
+        red?: number | undefined;
+        green?: number | undefined;
+        blue?: number | undefined;
+    }) => Color;
 }
-export declare class IndexedColor {
+export declare class IndexedColor extends Color {
     readonly index: number;
-    readonly color: Color;
     constructor(index: number, color: Color);
+    toColor(): Color;
+    copyWith: ({ red, green, blue, index, }?: {
+        red?: number | undefined;
+        green?: number | undefined;
+        blue?: number | undefined;
+        index?: number | undefined;
+    }) => IndexedColor;
 }
 export declare abstract class Colors {
     static readonly green: Color;

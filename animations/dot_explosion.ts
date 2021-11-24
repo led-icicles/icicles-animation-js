@@ -7,7 +7,7 @@ import {
   Duration,
 } from "../src";
 
-const optimize = true;
+const optimize = false;
 
 const compile = async () => {
   const iciclesCount = 20;
@@ -20,7 +20,7 @@ const compile = async () => {
     xCount: iciclesCount,
     yCount: ledsPerIcicle,
     loopsCount: 2,
-    useRgb565: true,
+    useRgb565: false,
   });
 
   const explode = (color: Color) => {
@@ -72,7 +72,7 @@ const compile = async () => {
   explode(Colors.violet);
 
   await animation.toFile(
-    `compiled/eksplozja-kulek${optimize ? "-optimized-rgb565" : ""}.anim`
+    `compiled/dots${optimize ? "-optimized-rgb565" : ""}.anim`
   );
 };
 

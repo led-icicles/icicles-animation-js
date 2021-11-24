@@ -14,6 +14,7 @@ class Color {
             this.blue === color.blue;
         this.toIndexedColor = (index) => new IndexedColor(index, this);
         this.darken = (progress) => Color.linearBlend(this, new Color(0, 0, 0), progress);
+        this.copyWith = ({ red, green, blue, } = {}) => new Color(red !== null && red !== void 0 ? red : this.red, green !== null && green !== void 0 ? green : this.green, blue !== null && blue !== void 0 ? blue : this.blue);
         this._value = (red << 16) + (green << 8) + blue;
     }
     get value() {
@@ -43,10 +44,14 @@ Color.linearBlend = (left, right, progress) => {
             : progress;
     return new Color(left.red + (right.red - left.red) * clampedProgress, left.green + (right.green - left.green) * clampedProgress, left.blue + (right.blue - left.blue) * clampedProgress);
 };
-class IndexedColor {
+class IndexedColor extends Color {
     constructor(index, color) {
+        super(color.red, color.green, color.blue);
         this.index = index;
-        this.color = color;
+        this.copyWith = ({ red, green, blue, index, } = {}) => new IndexedColor(index !== null && index !== void 0 ? index : this.index, super.copyWith({ red, green, blue }));
+    }
+    toColor() {
+        return new Color(this.red, this.green, this.blue);
     }
 }
 exports.IndexedColor = IndexedColor;

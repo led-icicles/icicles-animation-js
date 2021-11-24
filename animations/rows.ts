@@ -6,9 +6,10 @@ const compile = async () => {
   const icicles = new Icicles(xCount, yCount);
   const animation = new Animation({
     name: "Rzędy",
-    optimize: true,
+    optimize: false,
     versionNumber: 1,
     xCount,
+    useRgb565: false,
     yCount,
     loopsCount: 5,
   });

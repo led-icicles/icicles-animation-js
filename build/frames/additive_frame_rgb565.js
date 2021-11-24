@@ -27,8 +27,7 @@ class AdditiveFrameRgb565 extends _1.AdditiveFrame {
                 /// pixel index (little endian)
                 data[dataPointer++] = index & 255;
                 data[dataPointer++] = index >>> 8;
-                const color = changedPixel.color;
-                const color565 = color.toRgb565();
+                const color565 = changedPixel.toRgb565();
                 /// color 565 (little endian)
                 data[dataPointer++] = color565 & 255;
                 data[dataPointer++] = color565 >>> 8;

@@ -21,6 +21,8 @@ var FrameType;
     /// [(2 - uint16)pixel_index][(1 -uint8)red][(1 -uint8)green][(1 -uint8)blue]
     /// Therefore it is possible to index `65535` pixels (leds)
     FrameType[FrameType["AdditiveFrameRgb565"] = 13] = "AdditiveFrameRgb565";
+    /// [(uint8)type][(uint16)duration][(uint8)panelIndex][(uint8)red][(uint8)green][(uint8)blue]
+    FrameType[FrameType["RadioColorFrame"] = 100] = "RadioColorFrame";
 })(FrameType = exports.FrameType || (exports.FrameType = {}));
 class Frame {
     constructor(duration) {

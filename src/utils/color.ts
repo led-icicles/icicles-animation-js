@@ -60,10 +60,40 @@ export class Color {
       left.blue + (right.blue - left.blue) * clampedProgress
     );
   };
+
+  public copyWith = ({
+    red,
+    green,
+    blue,
+  }: {
+    red?: number;
+    green?: number;
+    blue?: number;
+  } = {}): Color =>
+    new Color(red ?? this.red, green ?? this.green, blue ?? this.blue);
 }
 
-export class IndexedColor {
-  constructor(public readonly index: number, public readonly color: Color) {}
+export class IndexedColor extends Color {
+  constructor(public readonly index: number, color: Color) {
+    super(color.red, color.green, color.blue);
+  }
+
+  public toColor(): Color {
+    return new Color(this.red, this.green, this.blue);
+  }
+
+  public copyWith = ({
+    red,
+    green,
+    blue,
+    index,
+  }: {
+    red?: number;
+    green?: number;
+    blue?: number;
+    index?: number;
+  } = {}) =>
+    new IndexedColor(index ?? this.index, super.copyWith({ red, green, blue }));
 }
 
 /// Contains predefined colors that are used on icicles controler.

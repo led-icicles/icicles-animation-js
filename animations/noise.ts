@@ -6,10 +6,11 @@ const compile = async () => {
   const icicles = new Icicles(xCount, yCount);
   const anim = new Animation({
     name: "Szum",
-    optimize: true,
+    optimize: false,
     xCount,
     yCount,
-    useRgb565: true,
+    useRgb565: false,
+    loopsCount: 5,
   });
 
   const addNoiseFrame = (color: Color) => {
@@ -17,7 +18,7 @@ const compile = async () => {
       Math.random() > 0.5 ? Colors.black : color
     );
     icicles.setPixels(newPixels);
-    anim.addFrame(icicles.toFrame(new Duration({ milliseconds: 50 })));
+    anim.addFrame(icicles.toFrame(new Duration({ milliseconds: 16 })));
   };
 
   const addNoisePart = (color: Color) => {
@@ -33,7 +34,7 @@ const compile = async () => {
   addNoisePart(Colors.violet);
   addNoisePart(Colors.orange);
 
-  await anim.toFile(`./compiled/szum-rgb565.anim`);
+  await anim.toFile(`./compiled/szum.anim`);
 };
 
 compile();
