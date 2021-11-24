@@ -3,7 +3,7 @@ import { VisualFrame } from "../frames/visual_frame";
 import { Duration, Animation } from "..";
 export declare class Icicles {
     readonly animation: Animation;
-    readonly pixels: Array<Color>;
+    get pixels(): Array<Color>;
     get xCount(): number;
     get yCount(): number;
     constructor(animation: Animation);

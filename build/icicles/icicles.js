@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Icicles = void 0;
-const color_1 = require("../utils/color");
 const visual_frame_1 = require("../frames/visual_frame");
 const __1 = require("..");
 class Icicles {
@@ -54,7 +53,9 @@ class Icicles {
             const copiedPixels = this.pixels.slice(0);
             return new visual_frame_1.VisualFrame(copiedPixels, duration.milliseconds);
         };
-        this.pixels = new Array(animation.header.ledsCount).fill(new color_1.Color());
+    }
+    get pixels() {
+        return this.animation.currentView.pixels.slice(0);
     }
     get xCount() {
         return this.animation.header.xCount;

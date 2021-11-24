@@ -3,7 +3,9 @@ import { VisualFrame } from "../frames/visual_frame";
 import { Duration, Animation, RadioColorFrame, RadioPanelView } from "..";
 
 export class Icicles {
-  public readonly pixels: Array<Color>;
+  public get pixels(): Array<Color> {
+    return this.animation.currentView.pixels.slice(0);
+  }
 
   public get xCount(): number {
     return this.animation.header.xCount;
@@ -12,9 +14,7 @@ export class Icicles {
     return this.animation.header.yCount;
   }
 
-  constructor(public readonly animation: Animation) {
-    this.pixels = new Array(animation.header.ledsCount).fill(new Color());
-  }
+  constructor(public readonly animation: Animation) {}
 
   private _isValidIndex(index: number): void {
     if (index >= this.pixels.length || index < 0) {

@@ -73,7 +73,11 @@ class Animation {
                     }
                     else {
                         if (newFrame.isBroadcast) {
-                            this._radioPanels.map((p) => p.copyWith({ color: newFrame.color }));
+                            for (let i = 0; i < this._radioPanels.length; i++) {
+                                this._radioPanels[i] = this._radioPanels[i].copyWith({
+                                    color: newFrame.color,
+                                });
+                            }
                         }
                         else {
                             // shift index due to broadcast panel at 0
@@ -276,6 +280,9 @@ class Animation {
             }
         }
         return new AnimationView(intialFrame, radioPanels);
+    }
+    get currentView() {
+        return this.currentView;
     }
     //** Animation duration in milliseconds - loops included */
     get duration() {

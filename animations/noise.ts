@@ -23,8 +23,16 @@ const compile = async () => {
   };
 
   const addNoisePart = (color: Color) => {
-    icicles.setRadioPanelColor(2, color);
+    let x = 0;
     for (let i = 0; i < 300; i++) {
+      if (i % 60 == 0) {
+        if (x % 2 == 0) {
+          icicles.setRadioPanelColor(0, color);
+        } else {
+          icicles.setRadioPanelColor(1, new Color());
+        }
+        x++;
+      }
       addNoiseFrame(color);
     }
   };

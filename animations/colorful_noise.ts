@@ -10,8 +10,6 @@ import {
 const compile = async () => {
   const iciclesCount = 20;
   const ledsPerIcicle = 30;
-  const icicles = new Icicles(iciclesCount, ledsPerIcicle);
-
   const anim = new Animation({
     name: `Kolorowy szum`,
     optimize: true,
@@ -19,6 +17,7 @@ const compile = async () => {
     yCount: ledsPerIcicle,
     loopsCount: 1,
   });
+  const icicles = new Icicles(anim);
 
   const generateNoiseWithColor = (color: Color) => {
     const pixels = icicles.pixels;

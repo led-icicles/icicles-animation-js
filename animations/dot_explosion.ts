@@ -12,7 +12,6 @@ const optimize = false;
 const compile = async () => {
   const iciclesCount = 20;
   const ledsPerIcicle = 30;
-  const icicles = new Icicles(iciclesCount, ledsPerIcicle);
   const animation = new Animation({
     name: "Eksplozja kulek",
     optimize,
@@ -22,6 +21,7 @@ const compile = async () => {
     loopsCount: 2,
     useRgb565: false,
   });
+  const icicles = new Icicles(animation);
 
   const explode = (color: Color) => {
     const centerIndex = Math.round(ledsPerIcicle / 2);

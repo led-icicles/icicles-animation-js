@@ -3,7 +3,6 @@ import { Animation, Color, Colors, Duration, Icicles } from "../src";
 const compile = async () => {
   const xCount = 20;
   const yCount = 15;
-  const icicles = new Icicles(xCount, yCount);
   const animation = new Animation({
     name: "Rzędy",
     optimize: false,
@@ -13,17 +12,18 @@ const compile = async () => {
     yCount,
     loopsCount: 5,
   });
+  const icicles = new Icicles(animation);
 
   const columnsTo = (color: Color) => {
     for (let x = 0; x < xCount; x++) {
       icicles.setColumnColor(x, color);
-      animation.addFrame(icicles.toFrame(new Duration({ milliseconds: 32 })));
+      icicles.show(new Duration({ milliseconds: 32 }));
     }
   };
   const rowsTo = (color: Color) => {
     for (let y = 0; y < yCount; y++) {
       icicles.setRowColor(y, color);
-      animation.addFrame(icicles.toFrame(new Duration({ milliseconds: 32 })));
+      icicles.show(new Duration({ milliseconds: 32 }));
     }
   };
   rowsTo(Colors.green);

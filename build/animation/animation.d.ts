@@ -31,8 +31,9 @@ export declare class Animation {
     private readonly _header;
     get header(): AnimationHeader;
     play(): Generator<AnimationView, AnimationView, AnimationView>;
-    protected _radioPanels: Array<RadioPanelView>;
+    protected readonly _radioPanels: Array<RadioPanelView>;
     private _currentView;
+    get currentView(): VisualFrame;
     readonly optimize: boolean;
     readonly useRgb565: boolean;
     constructor(options: AnimationOptions & AnimationHeaderData);

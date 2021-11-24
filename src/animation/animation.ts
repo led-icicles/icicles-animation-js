@@ -105,10 +105,13 @@ export class Animation {
     }
     return new AnimationView(intialFrame, radioPanels);
   }
-  protected _radioPanels: Array<RadioPanelView>;
+  protected readonly _radioPanels: Array<RadioPanelView>;
 
   /// Current pixels view
   private _currentView: VisualFrame;
+  public get currentView(): VisualFrame {
+    return this.currentView;
+  }
   public readonly optimize: boolean = false;
   public readonly useRgb565: boolean = false;
 
@@ -174,7 +177,11 @@ export class Animation {
           }
         } else {
           if (newFrame.isBroadcast) {
-            this._radioPanels.map((p) => p.copyWith({ color: newFrame.color }));
+            for (let i = 0; i < this._radioPanels.length; i++) {
+              this._radioPanels[i] = this._radioPanels[i].copyWith({
+                color: newFrame.color,
+              });
+            }
           } else {
             // shift index due to broadcast panel at 0
             this._radioPanels[newFrame.panelIndex - 1] = this._radioPanels[
