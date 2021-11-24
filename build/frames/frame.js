@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Frame = exports.FrameType = void 0;
+const __1 = require("..");
 var FrameType;
 (function (FrameType) {
     /// [(1)type][(2)duration]
@@ -28,9 +29,9 @@ class Frame {
     constructor(duration) {
         this.duration = duration;
         if (typeof duration !== "number" || duration > Frame.maxDuration) {
-            throw new Error("Not valid duration provided. Duration should be larger or equal 0 and smaller than [Frame.maxDuration].");
+            throw new Error("Not valid duration provided. Duration should be larger or equal 0 but no larger than [Frame.maxDuration].");
         }
     }
 }
 exports.Frame = Frame;
-Frame.maxDuration = 65535;
+Frame.maxDuration = __1.UINT_16_MAX_SIZE;

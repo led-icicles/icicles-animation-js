@@ -1,3 +1,5 @@
+import { UINT_8_MAX_SIZE } from ".";
+
 export type ColorJson = { r: number; g: number; b: number };
 
 export class Color {
@@ -7,6 +9,18 @@ export class Color {
   }
 
   constructor(red: number, green: number, blue: number) {
+    if (
+      red > UINT_8_MAX_SIZE ||
+      green > UINT_8_MAX_SIZE ||
+      blue > UINT_8_MAX_SIZE ||
+      red < 0 ||
+      green < 0 ||
+      blue < 0
+    ) {
+      throw new Error(
+        "Color components (red, green, blue) should be larger or equal 0 but no larger than 255."
+      );
+    }
     this._value = (red << 16) + (green << 8) + blue;
   }
 
@@ -124,6 +138,7 @@ export abstract class Colors {
     Colors.lawnGreen,
   ];
 
-  public getRandomColor = (): Color =>
-    Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
+  public get randomColor(): Color {
+    return Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
+  }
 }

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Colors = exports.IndexedColor = exports.Color = void 0;
+const _1 = require(".");
 class Color {
     constructor(red, green, blue) {
         this.toJson = () => ({
@@ -15,6 +16,14 @@ class Color {
         this.toIndexedColor = (index) => new IndexedColor(index, this);
         this.darken = (progress) => Color.linearBlend(this, new Color(0, 0, 0), progress);
         this.copyWith = ({ red, green, blue, } = {}) => new Color(red !== null && red !== void 0 ? red : this.red, green !== null && green !== void 0 ? green : this.green, blue !== null && blue !== void 0 ? blue : this.blue);
+        if (red > _1.UINT_8_MAX_SIZE ||
+            green > _1.UINT_8_MAX_SIZE ||
+            blue > _1.UINT_8_MAX_SIZE ||
+            red < 0 ||
+            green < 0 ||
+            blue < 0) {
+            throw new Error("Color components (red, green, blue) should be larger or equal 0 but no larger than 255.");
+        }
         this._value = (red << 16) + (green << 8) + blue;
     }
     get value() {
@@ -57,8 +66,8 @@ class IndexedColor extends Color {
 exports.IndexedColor = IndexedColor;
 /// Contains predefined colors that are used on icicles controler.
 class Colors {
-    constructor() {
-        this.getRandomColor = () => Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
+    get randomColor() {
+        return Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
     }
 }
 exports.Colors = Colors;

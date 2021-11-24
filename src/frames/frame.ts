@@ -1,3 +1,5 @@
+import { UINT_16_MAX_SIZE } from "..";
+
 export enum FrameType {
   /// [(1)type][(2)duration]
   DelayFrame = 1,
@@ -27,13 +29,13 @@ export enum FrameType {
 }
 
 export abstract class Frame {
-  static readonly maxDuration: number = 65535;
+  static readonly maxDuration: number = UINT_16_MAX_SIZE;
   public abstract readonly type: FrameType;
 
   constructor(public readonly duration: number) {
     if (typeof duration !== "number" || duration > Frame.maxDuration) {
       throw new Error(
-        "Not valid duration provided. Duration should be larger or equal 0 and smaller than [Frame.maxDuration]."
+        "Not valid duration provided. Duration should be larger or equal 0 but no larger than [Frame.maxDuration]."
       );
     }
   }

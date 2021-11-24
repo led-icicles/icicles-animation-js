@@ -4,6 +4,7 @@ export declare class RadioColorFrame extends Frame {
     readonly panelIndex: number;
     readonly color: Color;
     readonly duration: number;
+    static readonly maxPanelIndex: number;
     readonly type: FrameType;
     constructor(panelIndex: number, color: Color, duration: number);
     get size(): number;
