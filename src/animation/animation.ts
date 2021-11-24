@@ -17,6 +17,33 @@ export type AnimationOptions = {
   useRgb565?: boolean;
 };
 
+export class RadioPanelView {
+  constructor(public readonly index: number, public readonly color: Color) {}
+
+  public copyWith = ({
+    index,
+    color,
+  }: {
+    index?: number;
+    color?: Color;
+  } = {}) => new RadioPanelView(index ?? this.index, color ?? this.color);
+}
+export class AnimationView {
+  constructor(
+    public readonly frame: VisualFrame,
+    public readonly radioPanels: Array<RadioPanelView>
+  ) {}
+
+  public copyWith = ({
+    frame,
+    radioPanels,
+  }: {
+    frame?: VisualFrame;
+    radioPanels?: Array<RadioPanelView>;
+  } = {}) =>
+    new AnimationView(frame ?? this.frame, radioPanels ?? this.radioPanels);
+}
+
 export class Animation {
   private readonly _frames: Array<Frame> = [];
   public get frames(): Array<Frame> {
@@ -27,25 +54,49 @@ export class Animation {
     return this._header;
   }
 
-  public *play(): Generator<VisualFrame, void, VisualFrame> {
+  public *play(): Generator<AnimationView, void, AnimationView> {
+    const intialFrame: VisualFrame = VisualFrame.filled(
+      this.header.pixelsCount,
+      new Color(0, 0, 0),
+      0
+    );
+
+    const radioPanels = new Array(this.header.radioPanelsCount)
+      .fill(undefined)
+      // radio panels indexes starts from 1 (0 is a broadcast channel)
+      .map((_, index) => new RadioPanelView(index + 1, new Color()));
+
     let loop = 0;
     while (loop++ < this.header.loopsCount) {
-      let currentView: VisualFrame = VisualFrame.filled(
-        this.header.pixelsCount,
-        new Color(0, 0, 0),
-        0
-      );
+      let view = new AnimationView(intialFrame, radioPanels);
 
       for (const frame of this._frames) {
         if (frame instanceof VisualFrame) {
-          currentView = frame;
-          yield frame as VisualFrame;
+          view = view.copyWith({ frame });
+          yield view;
         } else if (frame instanceof DelayFrame) {
-          currentView = currentView.copyWith({ duration: frame.duration });
-          yield currentView;
+          view = view.copyWith({
+            frame: view.frame.copyWith({ duration: frame.duration }),
+          });
+
+          yield view;
         } else if (frame instanceof AdditiveFrame) {
-          currentView = frame.mergeOnto(currentView);
-          yield currentView;
+          view = view.copyWith({
+            frame: frame.mergeOnto(view.frame),
+          });
+          yield view;
+        } else if (frame instanceof RadioColorFrame) {
+          view = view.copyWith({
+            frame: view.frame.copyWith({ duration: frame.duration }),
+            radioPanels: radioPanels.map((panel) => {
+              if (frame.isBroadcast || frame.panelIndex === panel.index) {
+                return panel.copyWith({ color: frame.color });
+              } else {
+                return panel;
+              }
+            }),
+          });
+          yield view;
         } else {
           throw new Error(`Unsupported frame type: "${frame.type}"`);
         }

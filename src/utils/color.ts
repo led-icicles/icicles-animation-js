@@ -8,7 +8,7 @@ export class Color {
     return this._value;
   }
 
-  constructor(red: number, green: number, blue: number) {
+  constructor(red: number = 0, green: number = 0, blue: number = 0) {
     if (
       red > UINT_8_MAX_SIZE ||
       green > UINT_8_MAX_SIZE ||

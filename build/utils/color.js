@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Colors = exports.IndexedColor = exports.Color = void 0;
 const _1 = require(".");
 class Color {
-    constructor(red, green, blue) {
+    constructor(red = 0, green = 0, blue = 0) {
         this.toJson = () => ({
             r: this.red,
             g: this.green,

@@ -10,13 +10,16 @@ export class RadioColorFrame extends Frame {
   static readonly maxPanelIndex: number = UINT_8_MAX_SIZE;
   public readonly type: FrameType = FrameType.RadioColorFrame;
 
+  public get isBroadcast(): boolean {
+    return this.panelIndex === 0;
+  }
   constructor(
     public readonly panelIndex: number,
     public readonly color: Color,
     public readonly duration: number
   ) {
     super(duration);
-    if (panelIndex > UINT_8_MAX_SIZE) {
+    if (isNaN(panelIndex) || panelIndex > UINT_8_MAX_SIZE) {
       throw new Error(
         "Not valid panel index provided. Panel index should be larger or equal 0 (for broadcast) and smaller than [RadioColorFrame.maxPanelIndex]."
       );

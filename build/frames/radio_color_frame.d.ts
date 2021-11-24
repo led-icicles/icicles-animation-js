@@ -6,6 +6,7 @@ export declare class RadioColorFrame extends Frame {
     readonly duration: number;
     static readonly maxPanelIndex: number;
     readonly type: FrameType;
+    get isBroadcast(): boolean;
     constructor(panelIndex: number, color: Color, duration: number);
     get size(): number;
     toBytes: () => Uint8Array;

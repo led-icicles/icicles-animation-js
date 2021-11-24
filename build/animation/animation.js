@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Animation = void 0;
+exports.Animation = exports.AnimationView = exports.RadioPanelView = void 0;
 const animation_header_1 = require("./animation_header");
 const color_1 = require("../utils/color");
 const frame_1 = require("../frames/frame");
@@ -21,6 +21,22 @@ const additive_frame_1 = require("../frames/additive_frame");
 const additive_frame_rgb565_1 = require("../frames/additive_frame_rgb565");
 const visual_frame_rgb565_1 = require("../frames/visual_frame_rgb565");
 const __1 = require("..");
+class RadioPanelView {
+    constructor(index, color) {
+        this.index = index;
+        this.color = color;
+        this.copyWith = ({ index, color, } = {}) => new RadioPanelView(index !== null && index !== void 0 ? index : this.index, color !== null && color !== void 0 ? color : this.color);
+    }
+}
+exports.RadioPanelView = RadioPanelView;
+class AnimationView {
+    constructor(frame, radioPanels) {
+        this.frame = frame;
+        this.radioPanels = radioPanels;
+        this.copyWith = ({ frame, radioPanels, } = {}) => new AnimationView(frame !== null && frame !== void 0 ? frame : this.frame, radioPanels !== null && radioPanels !== void 0 ? radioPanels : this.radioPanels);
+    }
+}
+exports.AnimationView = AnimationView;
 class Animation {
     constructor(options) {
         var _b, _c;
@@ -174,21 +190,44 @@ class Animation {
         return this._header;
     }
     *play() {
+        const intialFrame = visual_frame_1.VisualFrame.filled(this.header.pixelsCount, new color_1.Color(0, 0, 0), 0);
+        const radioPanels = new Array(this.header.radioPanelsCount)
+            .fill(undefined)
+            // radio panels indexes starts from 1 (0 is a broadcast channel)
+            .map((_, index) => new RadioPanelView(index + 1, new color_1.Color()));
         let loop = 0;
         while (loop++ < this.header.loopsCount) {
-            let currentView = visual_frame_1.VisualFrame.filled(this.header.pixelsCount, new color_1.Color(0, 0, 0), 0);
+            let view = new AnimationView(intialFrame, radioPanels);
             for (const frame of this._frames) {
                 if (frame instanceof visual_frame_1.VisualFrame) {
-                    currentView = frame;
-                    yield frame;
+                    view = view.copyWith({ frame });
+                    yield view;
                 }
                 else if (frame instanceof delay_frame_1.DelayFrame) {
-                    currentView = currentView.copyWith({ duration: frame.duration });
-                    yield currentView;
+                    view = view.copyWith({
+                        frame: view.frame.copyWith({ duration: frame.duration }),
+                    });
+                    yield view;
                 }
                 else if (frame instanceof additive_frame_1.AdditiveFrame) {
-                    currentView = frame.mergeOnto(currentView);
-                    yield currentView;
+                    view = view.copyWith({
+                        frame: frame.mergeOnto(view.frame),
+                    });
+                    yield view;
+                }
+                else if (frame instanceof __1.RadioColorFrame) {
+                    view = view.copyWith({
+                        frame: view.frame.copyWith({ duration: frame.duration }),
+                        radioPanels: radioPanels.map((panel) => {
+                            if (frame.isBroadcast || frame.panelIndex === panel.index) {
+                                return panel.copyWith({ color: frame.color });
+                            }
+                            else {
+                                return panel;
+                            }
+                        }),
+                    });
+                    yield view;
                 }
                 else {
                     throw new Error(`Unsupported frame type: "${frame.type}"`);
