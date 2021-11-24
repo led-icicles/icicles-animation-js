@@ -275,6 +275,7 @@ class Animation {
                 }
             }
         }
+        return new AnimationView(intialFrame, radioPanels);
     }
     //** Animation duration in milliseconds - loops included */
     get duration() {

@@ -30,7 +30,7 @@ export declare class Animation {
     get frames(): Array<Frame>;
     private readonly _header;
     get header(): AnimationHeader;
-    play(): Generator<AnimationView, void, AnimationView>;
+    play(): Generator<AnimationView, AnimationView, AnimationView>;
     protected _radioPanels: Array<RadioPanelView>;
     private _currentView;
     readonly optimize: boolean;

@@ -55,7 +55,7 @@ export class Animation {
     return this._header;
   }
 
-  public *play(): Generator<AnimationView, void, AnimationView> {
+  public *play(): Generator<AnimationView, AnimationView, AnimationView> {
     const intialFrame: VisualFrame = VisualFrame.filled(
       this.header.pixelsCount,
       new Color(0, 0, 0),
@@ -103,6 +103,7 @@ export class Animation {
         }
       }
     }
+    return new AnimationView(intialFrame, radioPanels);
   }
   protected _radioPanels: Array<RadioPanelView>;
 
