@@ -42,7 +42,10 @@ export class AnimationView {
     frame?: VisualFrame;
     radioPanels?: Array<RadioPanelView>;
   } = {}) =>
-    new AnimationView(frame ?? this.frame, radioPanels ?? this.radioPanels);
+    new AnimationView(
+      frame ?? this.frame,
+      radioPanels ?? this.radioPanels.slice(0)
+    );
 }
 
 export class Animation {
@@ -89,7 +92,7 @@ export class Animation {
         } else if (frame instanceof RadioColorFrame) {
           view = view.copyWith({
             frame: view.frame.copyWith({ duration: frame.duration }),
-            radioPanels: radioPanels.map((panel) => {
+            radioPanels: view.radioPanels.map((panel) => {
               if (frame.isBroadcast || frame.panelIndex === panel.index) {
                 return panel.copyWith({ color: frame.color });
               } else {

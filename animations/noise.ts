@@ -29,7 +29,7 @@ const compile = async () => {
         if (x % 2 == 0) {
           icicles.setRadioPanelColor(0, color);
         } else {
-          icicles.setRadioPanelColor(1, new Color(128));
+          icicles.setRadioPanelColor(1, new Color());
         }
         x++;
       }

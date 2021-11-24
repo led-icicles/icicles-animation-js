@@ -33,7 +33,7 @@ class AnimationView {
     constructor(frame, radioPanels) {
         this.frame = frame;
         this.radioPanels = radioPanels;
-        this.copyWith = ({ frame, radioPanels, } = {}) => new AnimationView(frame !== null && frame !== void 0 ? frame : this.frame, radioPanels !== null && radioPanels !== void 0 ? radioPanels : this.radioPanels);
+        this.copyWith = ({ frame, radioPanels, } = {}) => new AnimationView(frame !== null && frame !== void 0 ? frame : this.frame, radioPanels !== null && radioPanels !== void 0 ? radioPanels : this.radioPanels.slice(0));
     }
 }
 exports.AnimationView = AnimationView;
@@ -266,7 +266,7 @@ class Animation {
                 else if (frame instanceof __1.RadioColorFrame) {
                     view = view.copyWith({
                         frame: view.frame.copyWith({ duration: frame.duration }),
-                        radioPanels: radioPanels.map((panel) => {
+                        radioPanels: view.radioPanels.map((panel) => {
                             if (frame.isBroadcast || frame.panelIndex === panel.index) {
                                 return panel.copyWith({ color: frame.color });
                             }
