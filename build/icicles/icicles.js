@@ -41,7 +41,9 @@ class Icicles {
             this.pixels[index] = color;
         };
         this.setAllPixelsColor = (color) => {
-            this.pixels.fill(color);
+            for (let index = 0; index < this.pixels.length; index++) {
+                this.pixels[index] = color;
+            }
         };
         this.setPixels = (pixels) => {
             if (this.pixels.length !== pixels.length) {
