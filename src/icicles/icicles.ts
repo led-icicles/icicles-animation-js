@@ -72,8 +72,8 @@ export class Icicles {
   };
 
   public setAllPixelsColor = (color: Color) => {
-    for (let index = 0; index < this.pixels.length; index++) {
-      this.pixels[index] = color;
+    for (let i = 0; i < this.pixels.length; i++) {
+      this._pixels[i] = color;
     }
   };
 
