@@ -138,7 +138,7 @@ export abstract class Colors {
     Colors.lawnGreen,
   ];
 
-  public get randomColor(): Color {
+  public static get randomColor(): Color {
     return Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
   }
 }
