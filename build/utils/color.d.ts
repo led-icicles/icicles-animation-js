@@ -48,5 +48,5 @@ export declare abstract class Colors {
     static readonly black: Color;
     static readonly white: Color;
     static readonly colors: Color[];
-    get randomColor(): Color;
+    static get randomColor(): Color;
 }
