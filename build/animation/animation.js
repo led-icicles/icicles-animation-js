@@ -306,6 +306,9 @@ class Animation {
         }
         return this._header.size + framesDataSize;
     }
+    dispose() {
+        this._frames.length = 0;
+    }
 }
 exports.Animation = Animation;
 _a = Animation;

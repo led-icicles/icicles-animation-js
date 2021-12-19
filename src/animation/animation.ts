@@ -534,4 +534,8 @@ export class Animation {
 
     return animation;
   };
+
+  public dispose() {
+    this._frames.length = 0;
+  }
 }

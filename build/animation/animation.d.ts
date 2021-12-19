@@ -45,4 +45,5 @@ export declare class Animation {
     toFile: (path: string) => Promise<void>;
     static fromFile: (path: string) => Promise<Animation>;
     static decode: (buffer: Buffer) => Promise<Animation>;
+    dispose(): void;
 }
