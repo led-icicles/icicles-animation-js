@@ -89,9 +89,6 @@ export class Animation {
   }
   public readonly optimize: boolean = false;
   public readonly useRgb565: boolean = false;
-  public get framesCount(): number {
-    return this.frames.length;
-  }
 
   constructor(options: AnimationOptions & AnimationHeaderData) {
     this._header = new AnimationHeader({
