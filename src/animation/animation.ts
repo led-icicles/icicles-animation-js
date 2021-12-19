@@ -11,42 +11,12 @@ import type * as pathTypes from "path";
 import { AdditiveFrameRgb565 } from "../frames/additive_frame_rgb565";
 import { VisualFrameRgb565 } from "../frames/visual_frame_rgb565";
 import { RadioColorFrame } from "..";
+import { AnimationView, RadioPanelView } from "./animation_view";
 
 export type AnimationOptions = {
   optimize?: boolean;
   useRgb565?: boolean;
 };
-
-export class RadioPanelView {
-  constructor(public readonly index: number, public readonly color: Color) {}
-
-  public copyWith = ({
-    index,
-    color,
-  }: {
-    index?: number;
-    color?: Color;
-  } = {}) => new RadioPanelView(index ?? this.index, color ?? this.color);
-}
-
-export class AnimationView {
-  constructor(
-    public readonly frame: VisualFrame,
-    public readonly radioPanels: Array<RadioPanelView>
-  ) {}
-
-  public copyWith = ({
-    frame,
-    radioPanels,
-  }: {
-    frame?: VisualFrame;
-    radioPanels?: Array<RadioPanelView>;
-  } = {}) =>
-    new AnimationView(
-      frame ?? this.frame,
-      radioPanels ?? this.radioPanels.slice(0)
-    );
-}
 
 export class Animation {
   private readonly _frames: Array<Frame> = [];

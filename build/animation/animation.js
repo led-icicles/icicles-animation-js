@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Animation = exports.AnimationView = exports.RadioPanelView = void 0;
+exports.Animation = void 0;
 const animation_header_1 = require("./animation_header");
 const color_1 = require("../utils/color");
 const frame_1 = require("../frames/frame");
@@ -21,22 +21,7 @@ const additive_frame_1 = require("../frames/additive_frame");
 const additive_frame_rgb565_1 = require("../frames/additive_frame_rgb565");
 const visual_frame_rgb565_1 = require("../frames/visual_frame_rgb565");
 const __1 = require("..");
-class RadioPanelView {
-    constructor(index, color) {
-        this.index = index;
-        this.color = color;
-        this.copyWith = ({ index, color, } = {}) => new RadioPanelView(index !== null && index !== void 0 ? index : this.index, color !== null && color !== void 0 ? color : this.color);
-    }
-}
-exports.RadioPanelView = RadioPanelView;
-class AnimationView {
-    constructor(frame, radioPanels) {
-        this.frame = frame;
-        this.radioPanels = radioPanels;
-        this.copyWith = ({ frame, radioPanels, } = {}) => new AnimationView(frame !== null && frame !== void 0 ? frame : this.frame, radioPanels !== null && radioPanels !== void 0 ? radioPanels : this.radioPanels.slice(0));
-    }
-}
-exports.AnimationView = AnimationView;
+const animation_view_1 = require("./animation_view");
 class Animation {
     constructor(options) {
         var _b, _c;
@@ -229,7 +214,7 @@ class Animation {
         this.useRgb565 = (_c = options.useRgb565) !== null && _c !== void 0 ? _c : false;
         this._radioPanels = new Array(options.radioPanelsCount)
             .fill(undefined)
-            .map((_, inedex) => new RadioPanelView(inedex + 1, new color_1.Color()));
+            .map((_, inedex) => new animation_view_1.RadioPanelView(inedex + 1, new color_1.Color()));
     }
     get frames() {
         return this._frames.slice(0);
@@ -242,10 +227,10 @@ class Animation {
         const radioPanels = new Array(this.header.radioPanelsCount)
             .fill(undefined)
             // radio panels indexes starts from 1 (0 is a broadcast channel)
-            .map((_, index) => new RadioPanelView(index + 1, new color_1.Color()));
+            .map((_, index) => new animation_view_1.RadioPanelView(index + 1, new color_1.Color()));
         let loop = 0;
         while (loop++ < this.header.loopsCount) {
-            let view = new AnimationView(intialFrame, radioPanels);
+            let view = new animation_view_1.AnimationView(intialFrame, radioPanels);
             for (const frame of this._frames) {
                 if (frame instanceof visual_frame_1.VisualFrame) {
                     view = view.copyWith({ frame });
@@ -284,7 +269,7 @@ class Animation {
                 }
             }
         }
-        return new AnimationView(intialFrame, radioPanels);
+        return new animation_view_1.AnimationView(intialFrame, radioPanels);
     }
     get currentView() {
         return this._currentView;
