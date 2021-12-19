@@ -274,6 +274,9 @@ class Animation {
     get currentView() {
         return this._currentView;
     }
+    get framesCount() {
+        return this.frames.length;
+    }
     //** Animation duration in milliseconds - loops included */
     get duration() {
         return (this._frames.reduce((p, n) => p + n.duration, 0) * this.header.loopsCount);

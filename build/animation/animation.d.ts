@@ -18,6 +18,7 @@ export declare class Animation {
     get currentView(): VisualFrame;
     readonly optimize: boolean;
     readonly useRgb565: boolean;
+    get framesCount(): number;
     constructor(options: AnimationOptions & AnimationHeaderData);
     addFrame: (newFrame: Frame) => void;
     get duration(): number;
