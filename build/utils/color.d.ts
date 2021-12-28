@@ -17,6 +17,7 @@ export declare class Color {
     toIndexedColor: (index: number) => IndexedColor;
     darken: (progress: number) => Color;
     static linearBlend: (left: Color, right: Color, progress: number) => Color;
+    static hsl(h: number, s: number, l: number): Color;
     copyWith: ({ red, green, blue, }?: {
         red?: number | undefined;
         green?: number | undefined;

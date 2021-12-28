@@ -14,31 +14,31 @@ class Icicles {
         };
         this.getPixelColor = (x, y) => {
             const index = this.getPixelIndex(x, y);
-            return this.pixels[index];
+            return this._pixels[index];
         };
         this.getPixelColorAtIndex = (index) => {
             this._isValidIndex(index);
-            return this.pixels[index];
+            return this._pixels[index];
         };
         this.setPixelColor = (x, y, color) => {
             const index = this.getPixelIndex(x, y);
-            this.pixels[index] = color;
+            this._pixels[index] = color;
         };
         this.setColumnColor = (x, color) => {
             const index = this.getPixelIndex(x, 0);
             for (let i = index; i < index + this.yCount; i++) {
-                this.pixels[i] = color;
+                this._pixels[i] = color;
             }
         };
         this.setRowColor = (y, color) => {
             for (let x = 0; x < this.xCount; x++) {
                 const index = this.getPixelIndex(x, y);
-                this.pixels[index] = color;
+                this._pixels[index] = color;
             }
         };
         this.setPixelColorAtIndex = (index, color) => {
             this._isValidIndex(index);
-            this.pixels[index] = color;
+            this._pixels[index] = color;
         };
         this.setAllPixelsColor = (color) => {
             for (let i = 0; i < this.pixels.length; i++) {
@@ -46,7 +46,7 @@ class Icicles {
             }
         };
         this.setPixels = (pixels) => {
-            if (this.pixels.length !== pixels.length) {
+            if (this._pixels.length !== pixels.length) {
                 throw new Error(`Unsupported pixels length: "${pixels.length}". Size of "${this.pixels.length}" is allowed.`);
             }
             for (let i = 0; i < this.pixels.length; i++) {
@@ -69,8 +69,8 @@ class Icicles {
         return this.animation.header.yCount;
     }
     _isValidIndex(index) {
-        if (index >= this.pixels.length || index < 0) {
-            throw new Error(`Invalid pixel index provided: "${index}". Valid range is from "0" to "${this.pixels.length - 1}"`);
+        if (index >= this._pixels.length || index < 0) {
+            throw new Error(`Invalid pixel index provided: "${index}". Valid range is from "0" to "${this._pixels.length - 1}"`);
         }
     }
     /**
