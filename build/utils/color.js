@@ -66,7 +66,7 @@ class IndexedColor extends Color {
 exports.IndexedColor = IndexedColor;
 /// Contains predefined colors that are used on icicles controler.
 class Colors {
-    get randomColor() {
+    static get randomColor() {
         return Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
     }
 }
