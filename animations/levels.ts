@@ -1,4 +1,12 @@
-import { Animation, Color, Colors, Duration, Icicles } from "../src";
+import {
+  Animation,
+  Color,
+  Colors,
+  Curves,
+  Duration,
+  Icicles,
+  Tween,
+} from "../src";
 
 const compile = async () => {
   const xCount = 20;
@@ -30,17 +38,37 @@ const compile = async () => {
     icicles.show(new Duration({ milliseconds: 16 }));
   };
 
-  // for (let i = 0; i < yCount; i += 0.5) {
-  //   show(i);
-  // }
+  const tween = new Tween(0.05, 0.35);
+  const cycle = (left: Color, right: Color) => {
+    for (let i = 0; i < 1; i += 0.001) {
+      show(
+        left,
+        right,
+        yCount,
+        tween.transform(Curves.easeInQuint.transform(i))
+      );
+    }
+    for (let i = 1; i >= 0; i -= 0.001) {
+      show(
+        left,
+        right,
+        yCount,
+        tween.transform(Curves.easeInQuint.transform(i))
+      );
+    }
+  };
 
-  for (let i = 0; i < 1; i += 0.001) {
-    show(Colors.red, Colors.blue, yCount, i);
+  for (let i = 0; i < yCount; i += 0.25) {
+    show(Colors.red, Colors.blue, i, 0.05);
   }
 
-  // for (let i = yCount; i >= 0; i -= 0.5) {
-  //   show(i);
-  // }
+  cycle(Colors.red, Colors.blue);
+  cycle(Colors.lawnGreen, Colors.violet);
+  cycle(Colors.lightBlue, Colors.orange);
+
+  for (let i = yCount; i >= 0; i -= 0.25) {
+    show(Colors.lightBlue, Colors.orange, i, 0.05);
+  }
 
   await animation.toFile(`./compiled/levels.anim`);
 };
