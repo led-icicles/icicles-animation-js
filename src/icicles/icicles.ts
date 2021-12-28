@@ -20,10 +20,10 @@ export class Icicles {
   }
 
   private _isValidIndex(index: number): void {
-    if (index >= this.pixels.length || index < 0) {
+    if (index >= this._pixels.length || index < 0) {
       throw new Error(
         `Invalid pixel index provided: "${index}". Valid range is from "0" to "${
-          this.pixels.length - 1
+          this._pixels.length - 1
         }"`
       );
     }
@@ -37,46 +37,46 @@ export class Icicles {
 
   public getPixelColor = (x: number, y: number): Color => {
     const index = this.getPixelIndex(x, y);
-    return this.pixels[index];
+    return this._pixels[index];
   };
 
   public getPixelColorAtIndex = (index: number): Color => {
     this._isValidIndex(index);
 
-    return this.pixels[index];
+    return this._pixels[index];
   };
 
   public setPixelColor = (x: number, y: number, color: Color): void => {
     const index = this.getPixelIndex(x, y);
-    this.pixels[index] = color;
+    this._pixels[index] = color;
   };
 
   public setColumnColor = (x: number, color: Color): void => {
     const index = this.getPixelIndex(x, 0);
     for (let i = index; i < index + this.yCount; i++) {
-      this.pixels[i] = color;
+      this._pixels[i] = color;
     }
   };
 
   public setRowColor = (y: number, color: Color): void => {
     for (let x = 0; x < this.xCount; x++) {
       const index = this.getPixelIndex(x, y);
-      this.pixels[index] = color;
+      this._pixels[index] = color;
     }
   };
 
   public setPixelColorAtIndex = (index: number, color: Color) => {
     this._isValidIndex(index);
 
-    this.pixels[index] = color;
+    this._pixels[index] = color;
   };
 
   public setAllPixelsColor = (color: Color) => {
-    this.pixels.fill(color);
+    this._pixels.fill(color);
   };
 
   public setPixels = (pixels: Array<Color>): void => {
-    if (this.pixels.length !== pixels.length) {
+    if (this._pixels.length !== pixels.length) {
       throw new Error(
         `Unsupported pixels length: "${pixels.length}". Size of "${this.pixels.length}" is allowed.`
       );

@@ -75,6 +75,32 @@ export class Color {
     );
   };
 
+  public static hsl(h: number, s: number, l: number) {
+    const max = 255;
+    if (s == 0.0 || l == 0.0) {
+      return new Color(l * max, l * max, l * max);
+    } else {
+      const _calcColor = (p: number, q: number, t: number) => {
+        if (t < 0.0) t += 1.0;
+        if (t > 1.0) t -= 1.0;
+
+        if (t < 1.0 / 6.0) return p + (q - p) * 6.0 * t;
+
+        if (t < 0.5) return q;
+
+        if (t < 2.0 / 3.0) return p + (q - p) * (2.0 / 3.0 - t) * 6.0;
+
+        return p;
+      };
+      let q = l < 0.5 ? l * (1.0 + s) : l + s - l * s;
+      let p = 2.0 * l - q;
+      const red = _calcColor(p, q, h + 1.0 / 3.0);
+      const green = _calcColor(p, q, h);
+      const blue = _calcColor(p, q, h - 1.0 / 3.0);
+      return new Color(red * max, green * max, blue * max);
+    }
+  }
+
   public copyWith = ({
     red,
     green,
@@ -138,7 +164,7 @@ export abstract class Colors {
     Colors.lawnGreen,
   ];
 
-  public get randomColor(): Color {
+  public static get randomColor(): Color {
     return Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
   }
 }
