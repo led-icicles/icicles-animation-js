@@ -11,4 +11,5 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./animation_header"), exports);
+__exportStar(require("./animation_view"), exports);
 __exportStar(require("./animation"), exports);

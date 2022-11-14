@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Colors = exports.IndexedColor = exports.Color = void 0;
+const _1 = require(".");
 class Color {
-    constructor(red, green, blue) {
+    constructor(red = 0, green = 0, blue = 0) {
         this.toJson = () => ({
             r: this.red,
             g: this.green,
@@ -14,6 +15,15 @@ class Color {
             this.blue === color.blue;
         this.toIndexedColor = (index) => new IndexedColor(index, this);
         this.darken = (progress) => Color.linearBlend(this, new Color(0, 0, 0), progress);
+        this.copyWith = ({ red, green, blue, } = {}) => new Color(red !== null && red !== void 0 ? red : this.red, green !== null && green !== void 0 ? green : this.green, blue !== null && blue !== void 0 ? blue : this.blue);
+        if (red > _1.UINT_8_MAX_SIZE ||
+            green > _1.UINT_8_MAX_SIZE ||
+            blue > _1.UINT_8_MAX_SIZE ||
+            red < 0 ||
+            green < 0 ||
+            blue < 0) {
+            throw new Error("Color components (red, green, blue) should be larger or equal 0 but no larger than 255.");
+        }
         this._value = (red << 16) + (green << 8) + blue;
     }
     get value() {
@@ -31,6 +41,33 @@ class Color {
     toRgb565() {
         return (((this.red & 0xf8) << 8) + ((this.green & 0xfc) << 3) + (this.blue >> 3));
     }
+    static hsl(h, s, l) {
+        const max = 255;
+        if (s == 0.0 || l == 0.0) {
+            return new Color(l * max, l * max, l * max);
+        }
+        else {
+            const _calcColor = (p, q, t) => {
+                if (t < 0.0)
+                    t += 1.0;
+                if (t > 1.0)
+                    t -= 1.0;
+                if (t < 1.0 / 6.0)
+                    return p + (q - p) * 6.0 * t;
+                if (t < 0.5)
+                    return q;
+                if (t < 2.0 / 3.0)
+                    return p + (q - p) * (2.0 / 3.0 - t) * 6.0;
+                return p;
+            };
+            let q = l < 0.5 ? l * (1.0 + s) : l + s - l * s;
+            let p = 2.0 * l - q;
+            const red = _calcColor(p, q, h + 1.0 / 3.0);
+            const green = _calcColor(p, q, h);
+            const blue = _calcColor(p, q, h - 1.0 / 3.0);
+            return new Color(red * max, green * max, blue * max);
+        }
+    }
 }
 exports.Color = Color;
 Color.linearBlend = (left, right, progress) => {
@@ -43,17 +80,21 @@ Color.linearBlend = (left, right, progress) => {
             : progress;
     return new Color(left.red + (right.red - left.red) * clampedProgress, left.green + (right.green - left.green) * clampedProgress, left.blue + (right.blue - left.blue) * clampedProgress);
 };
-class IndexedColor {
+class IndexedColor extends Color {
     constructor(index, color) {
+        super(color.red, color.green, color.blue);
         this.index = index;
-        this.color = color;
+        this.copyWith = ({ red, green, blue, index, } = {}) => new IndexedColor(index !== null && index !== void 0 ? index : this.index, super.copyWith({ red, green, blue }));
+    }
+    toColor() {
+        return new Color(this.red, this.green, this.blue);
     }
 }
 exports.IndexedColor = IndexedColor;
 /// Contains predefined colors that are used on icicles controler.
 class Colors {
-    constructor() {
-        this.getRandomColor = () => Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
+    static get randomColor() {
+        return Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
     }
 }
 exports.Colors = Colors;

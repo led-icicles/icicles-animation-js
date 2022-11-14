@@ -5,7 +5,7 @@ const sizes_1 = require("../utils/sizes");
 exports.NEWEST_ANIMATION_VERSION = 1;
 exports.MIN_ANIMATION_VERSION = 1;
 class AnimationHeader {
-    constructor({ xCount, yCount, versionNumber: version, name, loopsCount: loops, }) {
+    constructor({ xCount, yCount, versionNumber: version, name, loopsCount: loops, radioPanelsCount = 0, }) {
         this._getEncodedAnimationNameV2 = () => {
             const isBrowser = typeof window != "undefined";
             const isLittleEndian = AnimationHeader.isLittleEndian;
@@ -39,6 +39,9 @@ class AnimationHeader {
             dataView.setUint16(offset, this.loopsCount, isLittleEndian);
             offset += sizes_1.UINT_16_SIZE_IN_BYTES;
             console.log(`loopsCount has been written → [${bytes}].`);
+            console.log(`Encoding radioPanelsCount: "${this.radioPanelsCount}".`);
+            dataView.setUint8(offset++, this.radioPanelsCount);
+            console.log(`radioPanelsCount has been written → [${bytes}].`);
             console.log(`Animation file header encoded → [${bytes}].`);
             return bytes;
         };
@@ -65,6 +68,13 @@ class AnimationHeader {
         }
         this.xCount = xCount;
         this.yCount = yCount;
+        if (isNaN(radioPanelsCount)) {
+            throw new Error("Value of radioPanelsCount must be a number.");
+        }
+        if (radioPanelsCount > sizes_1.UINT_8_MAX_SIZE || radioPanelsCount < 0) {
+            throw new Error("Value of radioPanelsCount must be between 0 and 255.");
+        }
+        this.radioPanelsCount = radioPanelsCount;
         if (version !== undefined &&
             (version < exports.MIN_ANIMATION_VERSION || version > exports.NEWEST_ANIMATION_VERSION)) {
             throw new Error("Unsupported version provided. " +
@@ -102,12 +112,14 @@ class AnimationHeader {
         const xCountSize = sizes_1.UINT_8_SIZE_IN_BYTES;
         const yCountSize = sizes_1.UINT_8_SIZE_IN_BYTES;
         const loopsSize = sizes_1.UINT_16_SIZE_IN_BYTES;
+        const radioPanelsCountSize = sizes_1.UINT_8_SIZE_IN_BYTES;
         return [
             versionSize,
             animationNameSize,
             xCountSize,
             yCountSize,
             loopsSize,
+            radioPanelsCountSize,
         ].reduce((a, b) => a + b, 0);
     }
 }
@@ -129,8 +141,8 @@ AnimationHeader.decode = (buffer) => {
     const xCount = dataView.getUint8(offset++);
     const yCount = dataView.getUint8(offset++);
     const loopsCount = dataView.getUint16(offset, AnimationHeader.isLittleEndian);
-    console.log("loopsCount", loopsCount);
     offset += sizes_1.UINT_16_SIZE_IN_BYTES;
+    const radioPanelsCount = dataView.getUint8(offset++);
     return {
         header: new AnimationHeader({
             xCount,
@@ -138,6 +150,7 @@ AnimationHeader.decode = (buffer) => {
             name,
             loopsCount,
             versionNumber,
+            radioPanelsCount,
         }),
         data: bytes.slice(offset),
     };

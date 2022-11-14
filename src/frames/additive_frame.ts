@@ -47,8 +47,8 @@ export class AdditiveFrame extends Frame {
     const newFrame = frame.copyWith({ duration: this.duration });
 
     for (let i = 0; i < this.changedPixels.length; i++) {
-      const { index, color } = this.changedPixels[i];
-      newFrame.pixels[index] = color;
+      const changedPixel = this.changedPixels[i];
+      newFrame.pixels[changedPixel.index] = changedPixel.toColor();
     }
 
     return newFrame;
@@ -100,7 +100,7 @@ export class AdditiveFrame extends Frame {
       data[dataPointer++] = index & 255;
       data[dataPointer++] = index >>> 8;
 
-      const color = changedPixel.color;
+      const color = changedPixel;
 
       data[dataPointer++] = color.red;
       data[dataPointer++] = color.green;

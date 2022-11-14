@@ -1,18 +1,29 @@
 import { Color } from "../utils/color";
 import { VisualFrame } from "../frames/visual_frame";
-import { Duration } from "..";
+import { Duration, Animation, RadioColorFrame } from "..";
 
 export class Icicles {
-  public readonly pixels: Array<Color>;
-  constructor(public readonly xCount: number, public readonly yCount: number) {
-    this.pixels = new Array(xCount * yCount).fill(new Color(0, 0, 0));
+  private readonly _pixels: Array<Color>;
+  public get pixels(): Array<Color> {
+    return this._pixels.slice(0);
+  }
+
+  public get xCount(): number {
+    return this.animation.header.xCount;
+  }
+  public get yCount(): number {
+    return this.animation.header.yCount;
+  }
+
+  constructor(public readonly animation: Animation) {
+    this._pixels = new Array(animation.header.ledsCount).fill(new Color());
   }
 
   private _isValidIndex(index: number): void {
-    if (index >= this.pixels.length || index < 0) {
+    if (index >= this._pixels.length || index < 0) {
       throw new Error(
         `Invalid pixel index provided: "${index}". Valid range is from "0" to "${
-          this.pixels.length - 1
+          this._pixels.length - 1
         }"`
       );
     }
@@ -26,57 +37,80 @@ export class Icicles {
 
   public getPixelColor = (x: number, y: number): Color => {
     const index = this.getPixelIndex(x, y);
-    return this.pixels[index];
+    return this._pixels[index];
   };
 
   public getPixelColorAtIndex = (index: number): Color => {
     this._isValidIndex(index);
 
-    return this.pixels[index];
+    return this._pixels[index];
   };
 
   public setPixelColor = (x: number, y: number, color: Color): void => {
     const index = this.getPixelIndex(x, y);
-    this.pixels[index] = color;
+    this._pixels[index] = color;
   };
 
   public setColumnColor = (x: number, color: Color): void => {
     const index = this.getPixelIndex(x, 0);
     for (let i = index; i < index + this.yCount; i++) {
-      this.pixels[i] = color;
+      this._pixels[i] = color;
     }
   };
 
   public setRowColor = (y: number, color: Color): void => {
     for (let x = 0; x < this.xCount; x++) {
       const index = this.getPixelIndex(x, y);
-      this.pixels[index] = color;
+      this._pixels[index] = color;
     }
   };
 
   public setPixelColorAtIndex = (index: number, color: Color) => {
     this._isValidIndex(index);
 
-    this.pixels[index] = color;
+    this._pixels[index] = color;
   };
 
   public setAllPixelsColor = (color: Color) => {
-    this.pixels.fill(color);
+    for (let i = 0; i < this.pixels.length; i++) {
+      this._pixels[i] = color;
+    }
   };
 
-  public setPixels = (pixels: Array<Color>) => {
-    if (this.pixels.length !== pixels.length) {
+  public setPixels = (pixels: Array<Color>): void => {
+    if (this._pixels.length !== pixels.length) {
       throw new Error(
         `Unsupported pixels length: "${pixels.length}". Size of "${this.pixels.length}" is allowed.`
       );
     }
-
-    this.pixels.length = 0;
-    this.pixels.push(...pixels);
+    for (let i = 0; i < this.pixels.length; i++) {
+      this._pixels[i] = pixels[i];
+    }
   };
 
   public toFrame = (duration: Duration): VisualFrame => {
     const copiedPixels = this.pixels.slice(0);
     return new VisualFrame(copiedPixels, duration.milliseconds);
   };
+
+  /**
+   * When setting `duration` to any value other than 0ms, the panel color will be displayed
+   * immediately and the next frame will be delayed by the specified time.
+   *
+   * Skipping the `duration` will cause the radio panel colors to be displayed
+   * together with the `show` method invocation.
+   */
+  public setRadioPanelColor(
+    panelIndex: number,
+    color: Color,
+    duration: Duration = new Duration({ milliseconds: 0 })
+  ): void {
+    this.animation.addFrame(
+      new RadioColorFrame(panelIndex, color, duration.milliseconds)
+    );
+  }
+
+  public show(duration: Duration): void {
+    this.animation.addFrame(this.toFrame(duration));
+  }
 }

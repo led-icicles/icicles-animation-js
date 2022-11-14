@@ -1,3 +1,5 @@
+import { UINT_8_MAX_SIZE } from ".";
+
 export type ColorJson = { r: number; g: number; b: number };
 
 export class Color {
@@ -6,7 +8,19 @@ export class Color {
     return this._value;
   }
 
-  constructor(red: number, green: number, blue: number) {
+  constructor(red: number = 0, green: number = 0, blue: number = 0) {
+    if (
+      red > UINT_8_MAX_SIZE ||
+      green > UINT_8_MAX_SIZE ||
+      blue > UINT_8_MAX_SIZE ||
+      red < 0 ||
+      green < 0 ||
+      blue < 0
+    ) {
+      throw new Error(
+        "Color components (red, green, blue) should be larger or equal 0 but no larger than 255."
+      );
+    }
     this._value = (red << 16) + (green << 8) + blue;
   }
 
@@ -60,10 +74,66 @@ export class Color {
       left.blue + (right.blue - left.blue) * clampedProgress
     );
   };
+
+  public static hsl(h: number, s: number, l: number) {
+    const max = 255;
+    if (s == 0.0 || l == 0.0) {
+      return new Color(l * max, l * max, l * max);
+    } else {
+      const _calcColor = (p: number, q: number, t: number) => {
+        if (t < 0.0) t += 1.0;
+        if (t > 1.0) t -= 1.0;
+
+        if (t < 1.0 / 6.0) return p + (q - p) * 6.0 * t;
+
+        if (t < 0.5) return q;
+
+        if (t < 2.0 / 3.0) return p + (q - p) * (2.0 / 3.0 - t) * 6.0;
+
+        return p;
+      };
+      let q = l < 0.5 ? l * (1.0 + s) : l + s - l * s;
+      let p = 2.0 * l - q;
+      const red = _calcColor(p, q, h + 1.0 / 3.0);
+      const green = _calcColor(p, q, h);
+      const blue = _calcColor(p, q, h - 1.0 / 3.0);
+      return new Color(red * max, green * max, blue * max);
+    }
+  }
+
+  public copyWith = ({
+    red,
+    green,
+    blue,
+  }: {
+    red?: number;
+    green?: number;
+    blue?: number;
+  } = {}): Color =>
+    new Color(red ?? this.red, green ?? this.green, blue ?? this.blue);
 }
 
-export class IndexedColor {
-  constructor(public readonly index: number, public readonly color: Color) {}
+export class IndexedColor extends Color {
+  constructor(public readonly index: number, color: Color) {
+    super(color.red, color.green, color.blue);
+  }
+
+  public toColor(): Color {
+    return new Color(this.red, this.green, this.blue);
+  }
+
+  public copyWith = ({
+    red,
+    green,
+    blue,
+    index,
+  }: {
+    red?: number;
+    green?: number;
+    blue?: number;
+    index?: number;
+  } = {}) =>
+    new IndexedColor(index ?? this.index, super.copyWith({ red, green, blue }));
 }
 
 /// Contains predefined colors that are used on icicles controler.
@@ -94,6 +164,7 @@ export abstract class Colors {
     Colors.lawnGreen,
   ];
 
-  public getRandomColor = (): Color =>
-    Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
+  public static get randomColor(): Color {
+    return Colors.colors[Math.floor(Math.random() * Colors.colors.length)];
+  }
 }

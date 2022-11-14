@@ -14,3 +14,4 @@ __exportStar(require("./frame"), exports);
 __exportStar(require("./visual_frame"), exports);
 __exportStar(require("./delay_frame"), exports);
 __exportStar(require("./additive_frame"), exports);
+__exportStar(require("./radio_color_frame"), exports);

@@ -15,3 +15,5 @@ __exportStar(require("./color"), exports);
 __exportStar(require("./duration"), exports);
 __exportStar(require("./regex"), exports);
 __exportStar(require("./sizes"), exports);
+__exportStar(require("./curves"), exports);
+__exportStar(require("./tween"), exports);

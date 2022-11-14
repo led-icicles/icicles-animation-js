@@ -16,6 +16,7 @@ export interface AnimationHeaderData {
   readonly yCount: number;
   readonly loopsCount?: number;
   readonly versionNumber?: number;
+  readonly radioPanelsCount?: number;
 }
 
 export class AnimationHeader implements AnimationHeaderData {
@@ -28,10 +29,20 @@ export class AnimationHeader implements AnimationHeaderData {
   /**  **uint8** max number: `255` */
   readonly yCount: number;
   /**  **uint16** max number: `65535`
-   * 0 - infinite (or device maximum loop iterations - if defined)
-   * 1 - is a default value
+   *
+   * `0` - infinite (or device maximum loop iterations - if defined)
+   *
+   * `1` - is a default value
    */
   readonly loopsCount: number;
+  /**  **uint8** max number: `255`
+   *
+   * `0` - Animation does not support radio panels. All functionality will be disabled.
+   *     if panels are present, they will play inline animations.
+   *
+   * `1-255` - The radio panels will turn black at the start of the animation and wait for instructions.
+   */
+  readonly radioPanelsCount: number;
 
   public get pixelsCount(): number {
     return this.xCount * this.yCount;
@@ -43,6 +54,7 @@ export class AnimationHeader implements AnimationHeaderData {
     versionNumber: version,
     name,
     loopsCount: loops,
+    radioPanelsCount = 0,
   }: AnimationHeaderData) {
     if (isNaN(xCount)) {
       throw new Error("Value of xCount must be a number.");
@@ -64,6 +76,14 @@ export class AnimationHeader implements AnimationHeaderData {
     }
     this.xCount = xCount;
     this.yCount = yCount;
+
+    if (isNaN(radioPanelsCount)) {
+      throw new Error("Value of radioPanelsCount must be a number.");
+    }
+    if (radioPanelsCount > UINT_8_MAX_SIZE || radioPanelsCount < 0) {
+      throw new Error("Value of radioPanelsCount must be between 0 and 255.");
+    }
+    this.radioPanelsCount = radioPanelsCount;
 
     if (
       version !== undefined &&
@@ -114,6 +134,7 @@ export class AnimationHeader implements AnimationHeaderData {
     const xCountSize = UINT_8_SIZE_IN_BYTES;
     const yCountSize = UINT_8_SIZE_IN_BYTES;
     const loopsSize = UINT_16_SIZE_IN_BYTES;
+    const radioPanelsCountSize = UINT_8_SIZE_IN_BYTES;
 
     return [
       versionSize,
@@ -121,6 +142,7 @@ export class AnimationHeader implements AnimationHeaderData {
       xCountSize,
       yCountSize,
       loopsSize,
+      radioPanelsCountSize,
     ].reduce((a, b) => a + b, 0);
   }
 
@@ -168,6 +190,9 @@ export class AnimationHeader implements AnimationHeaderData {
     dataView.setUint16(offset, this.loopsCount, isLittleEndian);
     offset += UINT_16_SIZE_IN_BYTES;
     console.log(`loopsCount has been written → [${bytes}].`);
+    console.log(`Encoding radioPanelsCount: "${this.radioPanelsCount}".`);
+    dataView.setUint8(offset++, this.radioPanelsCount);
+    console.log(`radioPanelsCount has been written → [${bytes}].`);
 
     console.log(`Animation file header encoded → [${bytes}].`);
     return bytes;
@@ -205,8 +230,8 @@ export class AnimationHeader implements AnimationHeaderData {
       offset,
       AnimationHeader.isLittleEndian
     );
-    console.log("loopsCount", loopsCount);
     offset += UINT_16_SIZE_IN_BYTES;
+    const radioPanelsCount = dataView.getUint8(offset++);
 
     return {
       header: new AnimationHeader({
@@ -215,6 +240,7 @@ export class AnimationHeader implements AnimationHeaderData {
         name,
         loopsCount,
         versionNumber,
+        radioPanelsCount,
       }),
       data: bytes.slice(offset),
     };

@@ -6,7 +6,7 @@ export declare type ColorJson = {
 export declare class Color {
     private readonly _value;
     get value(): number;
-    constructor(red: number, green: number, blue: number);
+    constructor(red?: number, green?: number, blue?: number);
     get red(): number;
     get green(): number;
     get blue(): number;
@@ -17,11 +17,23 @@ export declare class Color {
     toIndexedColor: (index: number) => IndexedColor;
     darken: (progress: number) => Color;
     static linearBlend: (left: Color, right: Color, progress: number) => Color;
+    static hsl(h: number, s: number, l: number): Color;
+    copyWith: ({ red, green, blue, }?: {
+        red?: number | undefined;
+        green?: number | undefined;
+        blue?: number | undefined;
+    }) => Color;
 }
-export declare class IndexedColor {
+export declare class IndexedColor extends Color {
     readonly index: number;
-    readonly color: Color;
     constructor(index: number, color: Color);
+    toColor(): Color;
+    copyWith: ({ red, green, blue, index, }?: {
+        red?: number | undefined;
+        green?: number | undefined;
+        blue?: number | undefined;
+        index?: number | undefined;
+    }) => IndexedColor;
 }
 export declare abstract class Colors {
     static readonly green: Color;
@@ -37,5 +49,5 @@ export declare abstract class Colors {
     static readonly black: Color;
     static readonly white: Color;
     static readonly colors: Color[];
-    getRandomColor: () => Color;
+    static get randomColor(): Color;
 }

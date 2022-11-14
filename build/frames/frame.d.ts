@@ -3,7 +3,8 @@ export declare enum FrameType {
     VisualFrame = 2,
     AdditiveFrame = 3,
     VisualFrameRgb565 = 12,
-    AdditiveFrameRgb565 = 13
+    AdditiveFrameRgb565 = 13,
+    RadioColorFrame = 100
 }
 export declare abstract class Frame {
     readonly duration: number;

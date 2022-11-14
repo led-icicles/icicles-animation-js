@@ -10,6 +10,8 @@ import type * as fsTypes from "fs";
 import type * as pathTypes from "path";
 import { AdditiveFrameRgb565 } from "../frames/additive_frame_rgb565";
 import { VisualFrameRgb565 } from "../frames/visual_frame_rgb565";
+import { RadioColorFrame } from "..";
+import { AnimationView, RadioPanelView } from "./animation_view";
 
 export type AnimationOptions = {
   optimize?: boolean;
@@ -26,34 +28,65 @@ export class Animation {
     return this._header;
   }
 
-  public *play(): Generator<VisualFrame, void, VisualFrame> {
+  public *play(): Generator<AnimationView, AnimationView, AnimationView> {
+    const intialFrame: VisualFrame = VisualFrame.filled(
+      this.header.pixelsCount,
+      new Color(0, 0, 0),
+      0
+    );
+
+    const radioPanels = new Array(this.header.radioPanelsCount)
+      .fill(undefined)
+      // radio panels indexes starts from 1 (0 is a broadcast channel)
+      .map((_, index) => new RadioPanelView(index + 1, new Color()));
+
     let loop = 0;
     while (loop++ < this.header.loopsCount) {
-      let currentView: VisualFrame = VisualFrame.filled(
-        this.header.pixelsCount,
-        new Color(0, 0, 0),
-        0
-      );
+      let view = new AnimationView(intialFrame, radioPanels);
 
       for (const frame of this._frames) {
         if (frame instanceof VisualFrame) {
-          currentView = frame;
-          yield frame as VisualFrame;
+          view = view.copyWith({ frame });
+          yield view;
         } else if (frame instanceof DelayFrame) {
-          currentView = currentView.copyWith({ duration: frame.duration });
-          yield currentView;
+          view = view.copyWith({
+            frame: view.frame.copyWith({ duration: frame.duration }),
+          });
+
+          yield view;
         } else if (frame instanceof AdditiveFrame) {
-          currentView = frame.mergeOnto(currentView);
-          yield currentView;
+          view = view.copyWith({
+            frame: frame.mergeOnto(view.frame),
+          });
+          yield view;
+        } else if (frame instanceof RadioColorFrame) {
+          view = view.copyWith({
+            frame: view.frame.copyWith({ duration: frame.duration }),
+            radioPanels: view.radioPanels.map((panel) => {
+              if (frame.isBroadcast || frame.panelIndex === panel.index) {
+                return panel.copyWith({ color: frame.color });
+              } else {
+                return panel;
+              }
+            }),
+          });
+          if (frame.duration !== 0) {
+            yield view;
+          }
         } else {
           throw new Error(`Unsupported frame type: "${frame.type}"`);
         }
       }
     }
+    return new AnimationView(intialFrame, radioPanels);
   }
+  protected readonly _radioPanels: Array<RadioPanelView>;
 
   /// Current pixels view
   private _currentView: VisualFrame;
+  public get currentView(): VisualFrame {
+    return this._currentView;
+  }
   public readonly optimize: boolean = false;
   public readonly useRgb565: boolean = false;
 
@@ -64,6 +97,7 @@ export class Animation {
       yCount: options.yCount,
       loopsCount: options.loopsCount,
       versionNumber: options.versionNumber,
+      radioPanelsCount: options.radioPanelsCount,
     });
     /// Before each animation leds are set to black color.
     /// But black color is not displayed. To set all pixels to black,
@@ -76,19 +110,73 @@ export class Animation {
 
     this.optimize = options.optimize ?? false;
     this.useRgb565 = options.useRgb565 ?? false;
+
+    this._radioPanels = new Array(options.radioPanelsCount)
+      .fill(undefined)
+      .map((_, inedex) => new RadioPanelView(inedex + 1, new Color()));
   }
 
   public addFrame = (newFrame: Frame): void => {
     if (!newFrame) {
       throw new Error("Frame was not provided.");
+    } else if (newFrame instanceof DelayFrame) {
+      this._frames.push(newFrame);
+      return;
+    } else if (newFrame instanceof RadioColorFrame) {
+      if (newFrame.panelIndex > this.header.radioPanelsCount) {
+        throw new Error(
+          `Invalid panel index (${newFrame.panelIndex}). This animation supports "${this.header.radioPanelsCount}" radio panels.`
+        );
+      }
+      if (this.optimize) {
+        const isChanged = newFrame.isBroadcast
+          ? this._radioPanels.some((p) => p.color.notEquals(newFrame.color))
+          : this._radioPanels
+              .find((p) => p.index == newFrame.panelIndex)!
+              .color.notEquals(newFrame.color); // panel index is shifted due to broadcast panel at index 0
+        if (!isChanged) {
+          if (newFrame.duration === 0) {
+            console.warn(
+              `[OPTIMIZE] Skipping radio frame. No color changes. Size reduced by ${newFrame.size}B.`
+            );
+            return;
+          } else {
+            const delayFrame = new DelayFrame(newFrame.duration);
+            console.warn(
+              `[OPTIMIZE] No changes, replacing radio frame with delay frame. Size reduced by ${
+                newFrame.size - delayFrame.size
+              }B.`
+            );
+            this._frames.push(delayFrame);
+            return;
+          }
+        } else {
+          if (newFrame.isBroadcast) {
+            for (let i = 0; i < this._radioPanels.length; i++) {
+              this._radioPanels[i] = this._radioPanels[i].copyWith({
+                color: newFrame.color,
+              });
+            }
+          } else {
+            // shift index due to broadcast panel at 0
+            this._radioPanels[newFrame.panelIndex - 1] = this._radioPanels[
+              newFrame.panelIndex - 1
+            ].copyWith({
+              color: newFrame.color,
+            });
+          }
+          this._frames.push(newFrame);
+          return;
+        }
+      } else {
+        this._frames.push(newFrame);
+      }
+      return;
     } else if (newFrame.duration < 16) {
       throw new Error(
         "The animation can't run faster than 60 FPS (preferred: 30 FPS). " +
           "Therefore, the inter-frame delay cannot be less than 16ms."
       );
-    } else if (newFrame instanceof DelayFrame) {
-      this._frames.push(newFrame);
-      return;
     } else if (
       newFrame instanceof AdditiveFrameRgb565 ||
       newFrame instanceof VisualFrameRgb565
@@ -330,6 +418,18 @@ export class Animation {
 
           break;
         }
+        case FrameType.RadioColorFrame: {
+          const duration = dataView.getUint16(offset, true);
+          offset += UINT_16_SIZE_IN_BYTES;
+          const panelIndex = dataView.getUint8(offset++);
+          const red = dataView.getUint8(offset++);
+          const green = dataView.getUint8(offset++);
+          const blue = dataView.getUint8(offset++);
+
+          const color = new Color(red, green, blue);
+          animation.addFrame(new RadioColorFrame(panelIndex, color, duration));
+          break;
+        }
         case FrameType.AdditiveFrame: {
           const duration = dataView.getUint16(offset, true);
           offset += UINT_16_SIZE_IN_BYTES;
@@ -404,4 +504,8 @@ export class Animation {
 
     return animation;
   };
+
+  public dispose() {
+    this._frames.length = 0;
+  }
 }

@@ -7,12 +7,11 @@ import {
   Duration,
 } from "../src";
 
-const optimize = true;
+const optimize = false;
 
 const compile = async () => {
   const iciclesCount = 20;
   const ledsPerIcicle = 30;
-  const icicles = new Icicles(iciclesCount, ledsPerIcicle);
   const animation = new Animation({
     name: "Eksplozja kulek",
     optimize,
@@ -20,8 +19,9 @@ const compile = async () => {
     xCount: iciclesCount,
     yCount: ledsPerIcicle,
     loopsCount: 2,
-    useRgb565: true,
+    useRgb565: false,
   });
+  const icicles = new Icicles(animation);
 
   const explode = (color: Color) => {
     const centerIndex = Math.round(ledsPerIcicle / 2);
@@ -72,7 +72,7 @@ const compile = async () => {
   explode(Colors.violet);
 
   await animation.toFile(
-    `compiled/eksplozja-kulek${optimize ? "-optimized-rgb565" : ""}.anim`
+    `compiled/dots${optimize ? "-optimized-rgb565" : ""}.anim`
   );
 };
 
