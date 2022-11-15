@@ -356,6 +356,8 @@ export class Animation {
   };
 
   public static decode = async (buffer: Buffer): Promise<Animation> => {
+    const startTime = Date.now();
+
     const { header, data } = AnimationHeader.decode(buffer);
 
     const animation = new Animation({
@@ -497,9 +499,9 @@ export class Animation {
     }
 
     console.log(
-      `frames count: ${animation._frames.length}, size: ${(
+      `Decoded ${animation._frames.length} frames of size ${(
         animation.size / 1000
-      ).toFixed(2)} KB`
+      ).toFixed(2)}KB in ${Date.now() - startTime}ms`
     );
 
     return animation;
