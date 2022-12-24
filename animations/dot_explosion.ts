@@ -17,6 +17,7 @@ const compile = async () => {
     optimize,
     versionNumber: 1,
     xCount: iciclesCount,
+    radioPanelsCount: 2,
     yCount: ledsPerIcicle,
     loopsCount: 2,
     useRgb565: false,

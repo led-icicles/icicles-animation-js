@@ -12,7 +12,7 @@ const compile = async () => {
   const xCount = 20;
   const yCount = 30;
   const animation = new Animation({
-    name: "Levels",
+    name: "Poziomy",
     optimize: true,
     versionNumber: 1,
     xCount,
@@ -35,6 +35,13 @@ const compile = async () => {
       }
     }
     shift += accel;
+    const radio1 = (Math.sin(0 * Math.PI + shift) + 1) / 2;
+    const radio2 = (Math.sin(0 * Math.PI + shift) + 1) / 2;
+
+    const target1 = Color.linearBlend(left, right, radio1);
+    const target2 = Color.linearBlend(right, left, radio2);
+    icicles.setRadioPanelColor(1, target1);
+    icicles.setRadioPanelColor(2, target2);
     icicles.show(new Duration({ milliseconds: 16 }));
   };
 

@@ -25,11 +25,9 @@ const compile = async () => {
   const addNoisePart = (color: Color) => {
     const frames = 100;
     for (let i = 0; i < frames; i++) {
-      icicles.setRadioPanelColor(1, color.darken(Math.sin(i * 0.25)));
-      icicles.setRadioPanelColor(
-        2,
-        Color.linearBlend(new Color(), color, i / frames)
-      );
+      icicles.setRadioPanelColor(1, color.darken(Math.sin((i + Math.PI)  * 0.25)));
+      icicles.setRadioPanelColor(2, color.darken(Math.sin(i * 0.25)));
+      
       addNoiseFrame(color);
     }
   };

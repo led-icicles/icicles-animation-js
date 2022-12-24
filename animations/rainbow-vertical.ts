@@ -4,7 +4,7 @@ const compile = async () => {
   const xCount = 20;
   const yCount = 30;
   const animation = new Animation({
-    name: "Rainbow vertical",
+    name: "Tęcza wertykalna",
     optimize: true,
     versionNumber: 1,
     xCount,
@@ -16,7 +16,7 @@ const compile = async () => {
   const icicles = new Icicles(animation);
 
   const rainbow = () => {
-    for (let i = 0; i < 1; i += 0.001) {
+    for (let i = 0; i < 1; i += 0.0025) {
       for (let y = 0; y <= yCount; y++) {
         const color = Color.hsl(i + y * 0.01, 1, 0.5);
 

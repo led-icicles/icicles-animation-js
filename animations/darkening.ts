@@ -4,7 +4,7 @@ const compile = async () => {
   const xCount = 20;
   const yCount = 30;
   const animation = new Animation({
-    name: "Darkening",
+    name: "Ściemnianie",
     optimize: true,
     versionNumber: 1,
     xCount,

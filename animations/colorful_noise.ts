@@ -15,8 +15,9 @@ const compile = async () => {
     optimize: true,
     xCount: iciclesCount,
     yCount: ledsPerIcicle,
+    radioPanelsCount: 2,
     loopsCount: 1,
-    useRgb565: true,
+    useRgb565: false,
   });
   const icicles = new Icicles(anim);
 
@@ -41,7 +42,8 @@ const compile = async () => {
       }
     }
     /// wait for 500ms before next cycle
-    anim.addFrame(icicles.toFrame(new Duration({ milliseconds: 500 })));
+    icicles.setRadioPanelColor(0, color);
+    icicles.show(new Duration({ milliseconds: 500 }));
   };
 
   generateNoiseWithColor(Colors.white);
@@ -59,7 +61,7 @@ const compile = async () => {
   generateNoiseWithColor(Colors.green);
   generateNoiseWithColor(Colors.black);
 
-  await anim.toFile(`./compiled/kolorowy-szum-rgb565.anim`);
+  await anim.toFile(`./compiled/kolorowy-szum.anim`);
 };
 
 compile();
