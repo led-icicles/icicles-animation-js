@@ -16,11 +16,11 @@ const compile = async () => {
   const icicles = new Icicles(animation);
 
   const rainbow = () => {
-    for (let i = 0; i < 1; i += 0.0025) {
+    for (let i = 0; i < 1; i += 0.01) {
       const color = Color.hsl(i, 1, 0.5);
       icicles.setAllPixelsColor(color);
       icicles.setRadioPanelColor(0, color);
-      icicles.show(new Duration({ milliseconds: 20 }));
+      icicles.show(new Duration({ milliseconds: 33 }));
     }
   };
   rainbow();
