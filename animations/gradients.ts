@@ -15,7 +15,7 @@ const compileGradients = async (
       useRgb565: false,
       yCount,
       radioPanelsCount: 2,
-      loopsCount: 10,
+      loopsCount: 6,
     });
     const icicles = new Icicles(animation);
     const drawGradient = (left: Color, right: Color) => {
@@ -25,16 +25,16 @@ const compileGradients = async (
       }
       icicles.setRadioPanelColor(1, left);
       icicles.setRadioPanelColor(2, right);
-      icicles.show(new Duration({ milliseconds: 20 }));
+      icicles.show(new Duration({ milliseconds: 33 }));
     };
 
     const animateGradient = (
       from: GradientDefinition,
       to: GradientDefinition
     ) => {
-      const MAX = 128;
+      const MAX = 32;
       for (let i = 0; i <= MAX; i++) {
-        const progress = Curves.bounceOut.transform(i / MAX);
+        const progress = Curves.easeInExpo.transform(i / MAX);
         const left = Color.linearBlend(from.left, to.left, progress);
         const right = Color.linearBlend(from.right, to.right, progress);
         drawGradient(left, right);
@@ -68,28 +68,22 @@ const compileGradients = async (
 const compile = async () => {
   await compileGradients([
     {
-      left: Colors.blue,
-      right: Colors.red,
-      name: "Gradient blue-red",
-      filename: "01.Gradient-blue-red",
+      left: Colors.lightBlue,
+      right: Colors.black,
+      name: "Gradient niebieski",
+      filename: "01.Gradient-lightblue",
     },
     {
       left: Colors.orange,
-      right: Colors.lawnGreen,
-      name: "Gradient orange-lawngreen",
-      filename: "02.Gradient-orange-lawngreen",
+      right: Colors.black,
+      name: "Gradient pomarańczowy",
+      filename: "02.Gradient-orange",
     },
     {
-      left: Colors.violet,
-      right: Colors.yellow,
-      name: "Gradient violet-yellow",
-      filename: "03.Gradient-violet-yellow",
-    },
-    {
-      left: Colors.magenta,
-      right: Colors.lightBlue,
-      name: "Gradient magenta-lightblue",
-      filename: "04.Gradient-magenta-lightblue",
+      left: Colors.lawnGreen,
+      right: Colors.black,
+      name: "Gradient zielony",
+      filename: "03.Gradient-lawnGreen",
     },
   ]);
 };

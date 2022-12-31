@@ -9,7 +9,7 @@ const compile = async () => {
     xCount,
     yCount,
     useRgb565: false,
-    loopsCount: 5,
+    loopsCount: 1,
     radioPanelsCount: 2,
   });
   const icicles = new Icicles(animation);
@@ -19,11 +19,11 @@ const compile = async () => {
       Math.random() > 0.5 ? Colors.black : color
     );
     icicles.setPixels(newPixels);
-    icicles.show(new Duration({ milliseconds: 16 }));
+    icicles.show(new Duration({ milliseconds: 33 }));
   };
 
   const addNoisePart = (color: Color) => {
-    const frames = 100;
+    const frames = 60;
     for (let i = 0; i < frames; i++) {
       icicles.setRadioPanelColor(1, color.darken(Math.sin((i + Math.PI)  * 0.25)));
       icicles.setRadioPanelColor(2, color.darken(Math.sin(i * 0.25)));

@@ -12,7 +12,7 @@ const compile = async () => {
   const xCount = 20;
   const yCount = 30;
   const animation = new Animation({
-    name: "Poziomy",
+    name: "Poziomy czerwony zielony",
     optimize: true,
     versionNumber: 1,
     xCount,
@@ -42,12 +42,12 @@ const compile = async () => {
     const target2 = Color.linearBlend(right, left, radio2);
     icicles.setRadioPanelColor(1, target1);
     icicles.setRadioPanelColor(2, target2);
-    icicles.show(new Duration({ milliseconds: 16 }));
+    icicles.show(new Duration({ milliseconds: 33 }));
   };
 
   const tween = new Tween(0.05, 0.35);
   const cycle = (left: Color, right: Color) => {
-    for (let i = 0; i < 1; i += 0.001) {
+    for (let i = 0; i < 1; i += 0.005) {
       show(
         left,
         right,
@@ -55,7 +55,7 @@ const compile = async () => {
         tween.transform(Curves.easeInQuint.transform(i))
       );
     }
-    for (let i = 1; i >= 0; i -= 0.001) {
+    for (let i = 1; i >= 0; i -= 0.005) {
       show(
         left,
         right,
@@ -65,19 +65,20 @@ const compile = async () => {
     }
   };
 
-  for (let i = 0; i < yCount; i += 0.25) {
-    show(Colors.red, Colors.blue, i, 0.05);
-  }
+  // for (let i = 0; i < yCount; i += 0.25) {
+  //   show(Colors.red, Colors.blue, i, 0.05);
+  // }
 
-  cycle(Colors.red, Colors.blue);
-  cycle(Colors.lawnGreen, Colors.violet);
-  cycle(Colors.lightBlue, Colors.orange);
+  // cycle(Colors.red, Colors.blue);
+  // cycle(Colors.lawnGreen, Colors.violet);
+  cycle(Colors.red, Colors.green);
 
-  for (let i = yCount; i >= 0; i -= 0.25) {
-    show(Colors.lightBlue, Colors.orange, i, 0.05);
-  }
+  // for (let i = yCount; i >= 0; i -= 0.25) {
+  //   show(Colors.red, Colors.blue, i, 0.05);
+  //   // show(Colors.lightBlue, Colors.orange, i, 0.05);
+  // }
 
-  await animation.toFile(`./compiled/levels.anim`);
+  await animation.toFile(`./compiled/levels-red-green.anim`);
 };
 
 compile();
