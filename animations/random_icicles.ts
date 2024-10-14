@@ -2,8 +2,8 @@ import { randomInt } from "crypto";
 import { Animation, Color, Colors, Duration, Icicles } from "../src";
 
 const compile = async () => {
-  const xCount = 20;
-  const yCount = 30;
+  const xCount = 32;
+  const yCount = 16;
   const animation = new Animation({
     name: "Random icicles",
     optimize: true,

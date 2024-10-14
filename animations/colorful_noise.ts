@@ -8,8 +8,8 @@ import {
 } from "../src";
 
 const compile = async () => {
-  const iciclesCount = 20;
-  const ledsPerIcicle = 30;
+  const iciclesCount = 32;
+  const ledsPerIcicle = 16;
   const anim = new Animation({
     name: `Kolorowy szum`,
     optimize: true,
