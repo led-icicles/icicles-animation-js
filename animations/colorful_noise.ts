@@ -15,7 +15,9 @@ const compile = async () => {
     optimize: true,
     xCount: iciclesCount,
     yCount: ledsPerIcicle,
+    radioPanelsCount: 2,
     loopsCount: 1,
+    useRgb565: false,
   });
   const icicles = new Icicles(anim);
 
@@ -29,15 +31,19 @@ const compile = async () => {
     const getRandomPixelIndex = () =>
       Math.floor(Math.random() * indexedPixels.length);
 
+    let index = 0;
     /// generate noise pixel by pixel
     while (indexedPixels.length > 0) {
       const randomPixelIndex = getRandomPixelIndex();
       const [removedPixel] = indexedPixels.splice(randomPixelIndex, 1);
       icicles.setPixelColorAtIndex(removedPixel.index, color);
-      anim.addFrame(icicles.toFrame(new Duration({ milliseconds: 16 })));
+      if (++index % 10 === 0) {
+        anim.addFrame(icicles.toFrame(new Duration({ milliseconds: 16 })));
+      }
     }
     /// wait for 500ms before next cycle
-    anim.addFrame(icicles.toFrame(new Duration({ milliseconds: 500 })));
+    icicles.setRadioPanelColor(0, color);
+    icicles.show(new Duration({ milliseconds: 500 }));
   };
 
   generateNoiseWithColor(Colors.white);

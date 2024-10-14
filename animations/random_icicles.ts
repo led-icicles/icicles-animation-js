@@ -5,7 +5,7 @@ const compile = async () => {
   const xCount = 32;
   const yCount = 16;
   const animation = new Animation({
-    name: "Random icicles",
+    name: "Losowy sopel",
     optimize: true,
     versionNumber: 1,
     xCount,
@@ -21,10 +21,7 @@ const compile = async () => {
       const val = (Math.sin(i) + 1) * 0.5;
       const target = Color.linearBlend(Colors.black, color, val);
       icicles.setAllPixelsColor(Colors.black);
-      icicles.setRadioPanelColor(
-        0,
-        Color.linearBlend(Colors.black, color, 0.1)
-      );
+      icicles.setRadioPanelColor(0, target);
       icicles.setColumnColor(x, target);
       icicles.show(new Duration({ milliseconds: 20 }));
     }

@@ -1,4 +1,4 @@
-import { Animation, Colors, Duration, Icicles } from "../src";
+import { Animation, Color, Colors, Duration, Icicles } from "../src";
 
 const compile = async () => {
   const xCount = 32;
@@ -35,19 +35,25 @@ const compile = async () => {
           icicles.setPixelColor(x, y, color);
         }
       }
+      const val2 = Math.abs(Math.sin(val + 0 * 0.1));
+
+      icicles.setRadioPanelColor(
+        0,
+        Color.linearBlend(waves[0].color, waves[1].color, val2)
+      );
     }
-    icicles.show(new Duration({ milliseconds: 30 }));
+    icicles.show(new Duration({ milliseconds: 33 }));
   };
 
-  for (let i = 0; i < yCount; i += 0.5) {
+  for (let i = 0; i < yCount; i += 1) {
     show(i);
   }
 
-  for (let i = 0; i < 5_000; i++) {
+  for (let i = 0; i < 400; i++) {
     show(yCount);
   }
 
-  for (let i = yCount; i >= 0; i -= 0.5) {
+  for (let i = yCount; i >= 0; i -= 1) {
     show(i);
   }
 
